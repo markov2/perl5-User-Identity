@@ -1,6 +1,8 @@
 
 Revision history for Perl extension User::Identity.
 
+version 0.06: Wed Aug  6 10:41:23 CEST 2003
+
 version 0.05: Mon Jul 28 18:34:49 CEST 2003
 
 	Interface breaking:
