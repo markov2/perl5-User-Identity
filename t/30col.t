@@ -123,7 +123,7 @@ ok(! defined $f,                               "Unknown collection");
 
 ok(! $user->find(email => 'private'));
 
-$w = $user->add(email => [ private => email => 'markov@cpan.org' ]);
+$w = $user->add(email => [ private => address => 'markov@cpan.org' ]);
 ok(defined $w,                                  "Private email created");
 $col = $user->collection('email');
 ok(defined $col,                                "Email collection created");
