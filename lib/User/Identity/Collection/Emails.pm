@@ -20,7 +20,7 @@ in e-mail traffic.
 
 =chapter METHODS
 
-=section Initiation
+=section Constructors
 
 =c_method new [NAME], OPTIONS
 

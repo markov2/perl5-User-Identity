@@ -6,7 +6,6 @@ use warnings;
 
 use User::Identity;
 use Carp;
-use Scalar::Util qw/weaken/;
 use List::Util   qw/first/;
 
 =chapter NAME
@@ -48,9 +47,9 @@ Currently imlemented extensions are
 =item * I<people> is a L<collection of users|User::Identity::Collection::Users>
 =item * I<whereabouts> are L<locations|User::Identity::Collection::Locations>
 =item * a I<mailinglist> is a
-        L<collection of email addresses|User::Identity::Collection::Emails>
+L<collection of email addresses|User::Identity::Collection::Emails>
 =item * a I<network> contains
-        L<groups of systems|User::Identity::Collection::Systems>
+L<groups of systems|User::Identity::Collection::Systems>
 =back
 
 =chapter OVERLOADED
@@ -86,6 +85,8 @@ use overload '@{}' => sub { [ shift->roles ] };
 
 =chapter METHODS
 
+=section Constructors
+
 =cut
 
 sub type { "people" }
@@ -110,11 +111,9 @@ to create a role.
 sub init($)
 {   my ($self, $args) = @_;
 
-    exists $args->{$_} && ($self->{'UIC_'.$_} = delete $args->{$_})
-        foreach qw/item_type/;
-
     defined($self->SUPER::init($args)) or return;
     
+    $self->{UIC_itype} = delete $args->{item_type} or die;
     $self->{UIC_roles} = { };
     my $roles = $args->{roles};
  
@@ -141,6 +140,16 @@ are returned in random (hash) order.
 sub roles() { values %{shift->{UIC_roles}} }
 
 #-----------------------------------------
+
+=method itemType
+Returns the type of the items collected.
+=cut
+
+sub itemType { shift->{UIC_itype} }
+
+#-----------------------------------------
+
+=section Maintaining roles
 
 =method addRole ROLE| ( [NAME],OPTIONS ) | ARRAY-OF-OPTIONS
 
@@ -179,9 +188,9 @@ this collection.  However, for some reason this failed.
 
 sub addRole(@)
 {   my $self = shift;
+    my $maintains = $self->itemType;
 
     my $role;
-    my $maintains = $self->{UIC_item_type};
     if(ref $_[0] && ref $_[0] ne 'ARRAY')
     {   $role = shift;
         croak "ERROR: Wrong type of role for ".ref($self)
@@ -198,6 +207,56 @@ sub addRole(@)
     $self->{UIC_roles}{$role->name} = $role;
     $role;
 }
+
+#-----------------------------------------
+
+=method removeRole ROLE|NAME
+The deleted role is returned (if it existed).
+=cut
+
+sub removeRole($)
+{   my ($self, $which) = @_;
+    my $name = ref $which ? $which->name : $which;
+    my $role = delete $self->{UIC_roles}{$name} or return ();
+    $role->parent(undef);
+    $role;
+}
+
+#-----------------------------------------
+
+=method renameRole ROLE|OLDNAME, NEWNAME
+Give the role a different name, and move it in the collection.
+
+=error Cannot rename $name into $newname: already exists
+=error Cannot rename $name into $newname: doesn't exist
+=cut
+
+sub renameRole($$$)
+{   my ($self, $which, $newname) = @_;
+    my $name = ref $which ? $which->name : $which;
+
+    if(exists $self->{UIC_roles}{$newname})
+    {   $self->log(ERROR=>"Cannot rename $name into $newname: already exists");
+        return ();
+    }
+
+    my $role = delete $self->{UIC_roles}{$name};
+    unless(defined $role)
+    {   $self->log(ERROR => "Cannot rename $name into $newname: doesn't exist");
+        return ();
+    }
+
+    $role->name($newname);   # may imply change other attributes.
+    $self->{UIC_roles}{$newname} = $role;
+}
+
+#-----------------------------------------
+
+=method sorted
+Returns the roles sorted by name, alphabetically and case-sensitive.
+=cut
+
+sub sorted() { sort {$a->name cmp $b->name} shift->roles}
 
 #-----------------------------------------
 
