@@ -5,7 +5,7 @@ use strict;
 # Test User::Identity::Collection
 
 use lib qw/. ../;
-use Test::More tests => 42;
+use Test::More tests => 44;
 
 BEGIN {
    use_ok('User::Identity::Collection::Locations');
@@ -45,7 +45,7 @@ my $loc = $uil->new
  , city         => 'Arnhem'
  , country      => 'Nederland'
  , country_code => 'nl'
- , telephone    => '+18-12-2344556'
+ , phone        => '+18-12-2344556'
  , fax          => '+11-11-2344556'
  );
 
@@ -64,8 +64,10 @@ isa_ok($col, $uicl,                           "Correct collection");
 cmp_ok($col->roles, '==', 0,                  "No roles yet");
 cmp_ok(scalar @$col, '==', 0,                 "No overloaded roles yet");
 
+ok(! defined $loc->parent,                    "Role has no parent yet");
 same_obj($loc, $col->addRole($loc),           "Add prepared role");
 cmp_ok($col->roles, '==', 1,                  "First role in collection");
+same_obj($loc->parent, $col,                  "Role's parent is collection");
 cmp_ok(scalar @$col, '==', 1,                 "One overloaded role");
 same_obj($col->[0], $loc,                     "The role is there");
 is("$col", "locations: home");
@@ -132,5 +134,5 @@ isa_ok($col, "${uic}::Emails");
 
 $f = $user->find(email => 'private');
 ok(defined $f,                                  "Found anything");
-isa_ok($f, "${uic}::Item");
+isa_ok($f, "${ui}::Item");
 isa_ok($f, "Mail::Identity");

@@ -20,8 +20,6 @@ user on some system.
 
 =chapter METHODS
 
-=section Initiation
-
 =c_method new [NAME], OPTIONS
 
 =default name      C<'systems'>
@@ -43,7 +41,7 @@ sub init($)
     $self;
 }
 
-#-----------------------------------------
+sub type() { 'network' }
 
 1;
 

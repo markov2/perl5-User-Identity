@@ -18,7 +18,7 @@ my $a   = $ui->new('markov'
  , firstname => 'Mark', surname => 'Overmeer'
  , titles => 'drs.',    initials => 'M.A.C.J.'
  , language => 'nl-NL', charset => 'iso-8859-15'
- , gender => 'male',    date_of_birth => 'April 5, 1966'
+ , gender => 'male',    birth   => 'April 5, 1966'
  );
 
 ok(defined $a,                               "Create a");
@@ -34,7 +34,7 @@ my $b = $uil->new
  , city         => 'Arnhem'
  , country      => 'Nederland'
  , country_code => 'nl'
- , telephone    => '+18-12-2344556'
+ , phone        => '+18-12-2344556'
  , fax          => '+11-11-2344556'
  );
 
@@ -45,12 +45,12 @@ is($b->postalCode, '66341 XA');
 is($b->city, 'Arnhem');
 is($b->country, 'Nederland');
 is($b->countryCode, 'nl');
-is($b->telephone, '+18-12-2344556');
+is($b->phone, '+18-12-2344556');
 is($b->fax, '+11-11-2344556');
 
-ok(defined $b->user($a));
-isa_ok($b->user($a), $ui);
-is($b->user($a)->firstname, 'Mark');
+ok(defined $b->parent($a),                   "Add location to user");
+isa_ok($b->parent, $ui);
+is($b->user->firstname, 'Mark');
 
 is($b->fullAddress, <<'NL');
 Pad 12
@@ -69,7 +69,7 @@ my $c = $uil->new
  , pobox_pc     => '3412YY'
  , city         => 'XYZ'
  , country_code => 'nl'
- , telephone    => [ '1', '2' ]
+ , phone        => [ '1', '2' ]
  , fax          => [ '3', '4', '5', '6' ]
  );
 
@@ -80,8 +80,8 @@ is($c->pobox, 'Postbus 12');
 is($c->poboxPostalCode, '3412YY');
 is($c->city, 'XYZ');
 
-is(scalar $c->telephone, '1');
-my @ct = $c->telephone;
+is(scalar $c->phone, '1');
+my @ct = $c->phone;
 cmp_ok(scalar @ct, '==', 2);
 is($ct[0], '1');
 is($ct[1], '2');

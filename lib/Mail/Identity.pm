@@ -1,5 +1,5 @@
 package Mail::Identity;
-use base 'User::Identity::Collection::Item';
+use base 'User::Identity::Item';
 
 use strict;
 use warnings;
@@ -46,7 +46,9 @@ object.
 
 =chapter METHODS
 
-=section Initiation
+=cut
+
+sub type() { "email" }
 
 =c_method new [NAME], OPTIONS
 
@@ -116,7 +118,7 @@ sub init($)
    $self;
 }
 
-#-----------------------------------------
+=section Constructors
 
 =method from OBJECT
 
@@ -149,13 +151,9 @@ sub from($)
     undef;
 }
 
-
-#-----------------------------------------
-
 =section Attributes
 
 =method comment [STRING]
-
 E-mail address -when included in message MIME headers- can contain a comment.
 The RFCs advice not to store useful information in these comments, but it
 you really want to, you can do it.  The comment defaults to the user's
@@ -177,10 +175,7 @@ sub comment($)
     $self->phrase eq $full ? undef : $full;
 }
 
-#-----------------------------------------
-
 =method charset
-
 Returns the character set used in comment and phrase.  When set to
 C<undef>, the strings (are already encoded to) contain only ASCII
 characters.  This defaults to the value of the user's charset, if a user
@@ -196,10 +191,7 @@ sub charset()
     $user->charset;
 }
 
-#-----------------------------------------
-
 =method language
-
 Returns the language which is used for the description fields of this
 e-mail address, which defaults to the user's language.
 
@@ -214,10 +206,7 @@ sub language()
     $user->language;
 }
 
-#-----------------------------------------
-
 =method domain
-
 The domain is the part of the e-mail address after the C<@>-sign.
 When this is not defined, it can be deducted from the email address
 (see M<address()>).  If nothing is known, C<localhost> is returned.
@@ -233,10 +222,7 @@ sub domain()
     $address =~ s/.*?\@// ? $address : undef;
 }
 
-#-----------------------------------------
-
 =method address
-
 Returns the e-mail address for this role.  If none was specified, it will
 be constructed from the username and domain.  If those are not present
 as well, then the M<name()> is used when it contains a C<@>, else the
@@ -258,10 +244,7 @@ sub address()
     defined $user ? $user->nickname : $name;
 }
 
-#-----------------------------------------
-
 =method location
-
 Returns the object which describes to which location this mail address relates.
 The location may be used to find the name of the organization involved, or
 to create a signature.  If no location is specified, but a user is defined
@@ -286,10 +269,7 @@ sub location()
     $location;
 }
 
-#-----------------------------------------
-
 =method organization
-
 Returns the organization which relates to this e-mail identity.  If not
 explicitly specified, it is tried to be found via the location.
 
@@ -305,10 +285,7 @@ sub organization()
 }
 
 #pgp_key
-#-----------------------------------------
-
 =method phrase
-
 The phrase is used in an e-mail address to explain who is sending the
 message.  This usually is the fullname (the user's fullname is used by
 default), description of your function (Webmaster), or any other text.
@@ -322,20 +299,14 @@ you do no need to worry: input cannot break the outcome!
 sub phrase()
 {  my $self = shift;
     return $self->{MI_phrase} if defined $self->{MI_phrase};
-
     my $user = $self->user     or return undef;
     my $full = $user->fullName or return undef;
     $full;
 }
 
-#-----------------------------------------
-
 #signature
 
-#-----------------------------------------
-
 =method username
-
 Returns the username of this e-mail address.  If none is specified, first
 it is tried to extract it from the specified e-mail address.  If there is
 also no username in the e-mail address, the user identity's nickname is
@@ -355,8 +326,6 @@ sub username()
     my $user = $self->user or return;
     $user->nickname;
 }
-
-#-----------------------------------------
 
 1;
 

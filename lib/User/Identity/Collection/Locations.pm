@@ -21,8 +21,6 @@ M<User::Identity::Location> objects, each describing a physical location.
 
 =chapter METHODS
 
-=section Initiation
-
 =c_method new [NAME], OPTIONS
 
 =default name      C<'locations'>
@@ -44,7 +42,7 @@ sub init($)
     $self;
 }
 
-#-----------------------------------------
+sub type() { 'whereabouts' }
 
 1;
 

@@ -49,7 +49,7 @@ my $e = $ui->new('markov'
  , firstname => 'Mark', surname => 'Overmeer'
  , titles => 'drs.',    initials => 'M.A.C.J.'
  , language => 'nl-NL', charset => 'iso-8859-15'
- , gender => 'male',    date_of_birth => 'April 5, 1966'
+ , gender => 'male',    birth => 'April 5, 1966'
  );
 
 ok(defined $e,                               "Create e");

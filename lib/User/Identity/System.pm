@@ -1,5 +1,5 @@
 package User::Identity::System;
-use base 'User::Identity::Collection::Item';
+use base 'User::Identity::Item';
 
 use strict;
 use warnings;
@@ -26,7 +26,6 @@ User::Identity::System - physical system of a person
  my $addr = $me->add(system => ...);
 
 =chapter DESCRIPTION
-
 The C<User::Identity::System> object contains the description of the
 user's presence on a system.  The systems are collected
 by an M<User::Identity::Collection::Systems> object.
@@ -35,7 +34,9 @@ Nearly all methods can return undef.
 
 =chapter METHODS
 
-=section Initiation
+=cut
+
+sub type { "network" }
 
 =c_method new [NAME], OPTIONS
 
@@ -88,17 +89,12 @@ sub init($)
    $self;
 }
 
-#-----------------------------------------
-
 =section Attributes
-
 =method hostname
 
 =cut
 
 sub hostname() { shift->{UIS_hostname} }
-
-#-----------------------------------------
 
 =method username
 
@@ -106,24 +102,17 @@ sub hostname() { shift->{UIS_hostname} }
 
 sub username() { shift->{UIS_username} }
 
-#-----------------------------------------
-
 =method os
 
 =cut
 
 sub os() { shift->{UIS_os} }
 
-#-----------------------------------------
-
 =method password
 
 =cut
 
 sub password() { shift->{UIS_password} }
-
-
-#-----------------------------------------
 
 =method location
 

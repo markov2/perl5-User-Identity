@@ -38,32 +38,27 @@ User::Identity::Collection - base class for collecting roles of a user
  my $role  = $me->find(location => 'work');
  
 =chapter DESCRIPTION
-
 The C<User::Identity::Collection> object maintains a set user related
 objects.  It helps selecting these objects, which is partially common to
 all collections (for instance, each object has a name so you can search
 on names), and sometimes specific to the extension of this collection.
 
 Currently imlemented extensions are
-
 =over 4
-
-=item * M<User::Identity::Collection::Locations>
-
-=item * M<User::Identity::Collection::Emails>
-
-=item * M<User::Identity::Collection::Systems>
-
+=item * I<people> is a L<collection of users|User::Identity::Collection::Users>
+=item * I<whereabouts> are L<locations|User::Identity::Collection::Locations>
+=item * a I<mailinglist> is a
+        L<collection of email addresses|User::Identity::Collection::Emails>
+=item * a I<network> contains
+        L<groups of systems|User::Identity::Collection::Systems>
 =back
 
 =chapter OVERLOADED
 
 =overload stringification
-
 Returns the name of the collection and a sorted list of defined items.
 
 =examples
-
  print "$collection\n";  #   location: home, work
 
 =cut
@@ -73,10 +68,7 @@ use overload '""' => sub {
    $self->name . ": " . join(", ", sort map {$_->name} $self->roles);
 };
 
-#-----------------------------------------
-
 =overload @{}
-
 When the reference to a collection object is used as array-reference, it
 will be shown as list of roles.
 
@@ -94,14 +86,11 @@ use overload '@{}' => sub { [ shift->roles ] };
 
 =chapter METHODS
 
-=section Initiation
+=cut
+
+sub type { "people" }
 
 =c_method new [NAME], OPTIONS
-
-=option  user OBJECT
-=default user undef
-
-The user which has this collection of roles.
 
 =requires item_type CLASS
 
@@ -124,12 +113,8 @@ sub init($)
     exists $args->{$_} && ($self->{'UIC_'.$_} = delete $args->{$_})
         foreach qw/item_type/;
 
-    $self->SUPER::init($args);
+    defined($self->SUPER::init($args)) or return;
     
-    if(my $user = delete $args->{user})
-    {   $self->user($user);
-    }
- 
     $self->{UIC_roles} = { };
     my $roles = $args->{roles};
  
@@ -139,7 +124,6 @@ sub init($)
      :                         $roles;
  
     $self->addRole($_) foreach @roles;
- 
     $self;
 }
 
@@ -210,33 +194,9 @@ sub addRole(@)
             unless defined $role;
     }
 
-    $role->user($self->user);
+    $role->parent($self);
     $self->{UIC_roles}{$role->name} = $role;
     $role;
-}
-
-#-----------------------------------------
-
-=method user [USER]
-
-The user whose address this is.  This is a weak link, which means that
-the location object will be removed when the user object is deleted and
-no other references to this location object exist.
-
-=cut
-
-sub user(;$)
-{   my $self = shift;
-
-    if(@_)
-    {   my $user = shift;
-        $self->{UIC_user} = $user;
-
-        weaken($self->{UIC_user}) if defined $user;
-        $_->user($user) foreach $self->roles;
-    }
-
-    $self->{UIC_user};
 }
 
 #-----------------------------------------

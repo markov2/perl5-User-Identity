@@ -31,7 +31,7 @@ in e-mail traffic.
 
 sub new(@)
 {   my $class = shift;
-    $class->SUPER::new(emails => @_);
+    $class->SUPER::new(name => 'emails', @_);
 }
 
 sub init($)
@@ -39,10 +39,9 @@ sub init($)
     $args->{item_type} ||= 'Mail::Identity';
 
     $self->SUPER::init($args);
-    $self;
 }
 
-#-----------------------------------------
+sub type() { 'mailgroup' }
 
 1;
 
