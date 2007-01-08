@@ -1,7 +1,6 @@
 Changes
 MANIFEST
 Makefile.PL
-README
 lib/Mail/Identity.pm
 lib/User/Identity.pm
 lib/User/Identity/Archive.pm

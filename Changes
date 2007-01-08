@@ -3,6 +3,18 @@ Revision history for module User::Identity.
 All changes are made by Mark Overmeer <userid@overmeer.net> unless
 explicitly stated differently.
 
+version 0.91: Mon Jan  8 10:52:59 CET 2007
+
+	The module hasn't seen changes for some time now, but that
+	is because it works as expected.
+
+	Improvements:
+
+	- produced with newest OODoc, thereby
+	  could remove version, mkdoc and mkdist
+
+	- removed useless README
+
 version 0.90: Thu Aug 26 14:30:51 CEST 2004
 
 	Improvements:

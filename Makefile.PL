@@ -26,9 +26,28 @@ elsif($gc->VERSION < $gc_version)
 }
 
 WriteMakefile
-  ( NAME          => 'User::Identity'
-  , VERSION_FROM  => 'lib/User/Identity.pm'
-  , PREREQ_PM     => \%prereq
-  , ABSTRACT      => 'Define a user'
-  , AUTHOR        => 'Mark Overmeer <markov@cpan.org>'
+  ( NAME       => 'User::Identity'
+  , VERSION    => 0.91
+  , PREREQ_PM  => \%prereq
+  , ABSTRACT   => 'Collect information about a user'
+  , AUTHOR     => 'Mark Overmeer <perl@overmeer.net>'
 );
+
+### used by oodist during production of distribution
+sub MY::postamble { <<'__POSTAMBLE' }
+
+# for DIST
+RAWDIR          = ../public_html/userid/raw
+DISTDIR         = ../public_html/userid/source
+LICENSE         = artistic
+
+# for POD
+FIRST_YEAR      = 2003,2004,2007
+EMAIL           = userid@overmeer.net
+WEBSITE         = http://perl.overmeer.net/userid/
+
+# for HTML
+HTML_OUTPUT     = ../public_html/userid/html
+HTML_DOCROOT    = /userid/html
+
+__POSTAMBLE

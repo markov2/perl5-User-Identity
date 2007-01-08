@@ -133,6 +133,7 @@ sub from($@)
 
     while(my $starter = $self->_get_line)
     {   $self->_accept_line;
+#warn "$verbose: $starter\n";
         my $indent = $self->_indentation($starter);
 
         print "  adding $starter" if $verbose > 1;
@@ -265,7 +266,8 @@ sub _collectItem($$)
 #warn "$class NAME=$name";
     my $warn     = 0;
     my $warn_sub = $SIG{__WARN__};
-    $SIG{__WARN__} = sub {$warn++; $warn_sub ? $warn_sub->(@_) : print STDERR @_};
+    $SIG{__WARN__}
+       = sub {$warn++; $warn_sub ? $warn_sub->(@_) : print STDERR @_};
 
     my $item = $class->new(name => $name, @fields);
     $SIG{__WARN__} = $warn_sub;
@@ -275,6 +277,7 @@ sub _collectItem($$)
         $linenr -= 1;
         warn "  found in $source around line $linenr\n";
     }
+#warn $_->type foreach @items;
 
     $item->add($_->type => $_) foreach @items;
     $item;
