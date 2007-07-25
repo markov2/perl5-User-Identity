@@ -3,6 +3,12 @@ Revision history for module User::Identity.
 All changes are made by Mark Overmeer <userid@overmeer.net> unless
 explicitly stated differently.
 
+version 0.92: Wed Jul 25 08:50:51 CEST 2007
+
+	Improvements:
+
+	- add t/pod.t and distribution clean-ups.
+
 version 0.91: Mon Jan  8 10:52:59 CET 2007
 
 	The module hasn't seen changes for some time now, but that

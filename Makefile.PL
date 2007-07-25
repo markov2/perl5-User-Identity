@@ -7,7 +7,8 @@ use ExtUtils::MakeMaker;
 # a missing Geography::Countries, but is incompatible with older releases.
 #
 
-my %prereq;
+my %prereq = (Test::Pod => 1.00);
+
 my ($gc, $gc_version) = (Geography::Countries => 1.4);
 
 eval "require $gc";
@@ -27,11 +28,12 @@ elsif($gc->VERSION < $gc_version)
 
 WriteMakefile
   ( NAME       => 'User::Identity'
-  , VERSION    => 0.91
+  , VERSION    => 0.92
   , PREREQ_PM  => \%prereq
   , ABSTRACT   => 'Collect information about a user'
   , AUTHOR     => 'Mark Overmeer <perl@overmeer.net>'
-);
+  , LICENSE    => 'perl'
+  );
 
 ### used by oodist during production of distribution
 sub MY::postamble { <<'__POSTAMBLE' }
@@ -43,7 +45,7 @@ LICENSE         = artistic
 
 # for POD
 FIRST_YEAR      = 2003,2004,2007
-EMAIL           = userid@overmeer.net
+EMAIL           = perl@overmeer.net
 WEBSITE         = http://perl.overmeer.net/userid/
 
 # for HTML
