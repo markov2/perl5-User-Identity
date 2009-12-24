@@ -46,6 +46,8 @@ object.
 
 =chapter METHODS
 
+=section Constructors
+
 =cut
 
 sub type() { "email" }
@@ -131,7 +133,7 @@ and returned.
 =cut
 
 sub from($)
-{   my ($class, $other) = @_;
+{   my ($class, $other) = (shift, shift);
     return $other if $other->isa(__PACKAGE__);
 
     if($other->isa('Mail::Address'))

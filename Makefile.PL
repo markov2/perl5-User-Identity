@@ -28,7 +28,7 @@ elsif($gc->VERSION < $gc_version)
 
 WriteMakefile
   ( NAME       => 'User::Identity'
-  , VERSION    => 0.92
+  , VERSION    => 0.93
   , PREREQ_PM  => \%prereq
   , ABSTRACT   => 'Collect information about a user'
   , AUTHOR     => 'Mark Overmeer <perl@overmeer.net>'
