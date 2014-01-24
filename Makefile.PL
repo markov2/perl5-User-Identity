@@ -28,7 +28,7 @@ elsif($gc->VERSION < $gc_version)
 
 WriteMakefile
   ( NAME       => 'User::Identity'
-  , VERSION    => 0.93
+  , VERSION    => 0.94
   , PREREQ_PM  => \%prereq
   , ABSTRACT   => 'Collect information about a user'
   , AUTHOR     => 'Mark Overmeer <perl@overmeer.net>'
@@ -44,12 +44,8 @@ DISTDIR         = ../public_html/userid/source
 LICENSE         = artistic
 
 # for POD
-FIRST_YEAR      = 2003,2004,2007
+FIRST_YEAR      = 2003
 EMAIL           = perl@overmeer.net
 WEBSITE         = http://perl.overmeer.net/userid/
-
-# for HTML
-HTML_OUTPUT     = ../public_html/userid/html
-HTML_DOCROOT    = /userid/html
 
 __POSTAMBLE

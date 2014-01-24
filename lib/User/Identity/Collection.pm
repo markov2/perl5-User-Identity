@@ -86,15 +86,12 @@ use overload '@{}' => sub { [ shift->roles ] };
 =chapter METHODS
 
 =section Constructors
-
 =cut
 
 sub type { "people" }
 
 =c_method new [NAME], OPTIONS
-
 =requires item_type CLASS
-
 The CLASS which is used to store the information for each of the maintained
 objects within this collection.
 
@@ -131,15 +128,11 @@ sub init($)
 =section Attributes
 
 =method roles
-
 Returns all defined roles within this collection.  Be warned: the rules
 are returned in random (hash) order.
-
 =cut
 
 sub roles() { values %{shift->{UIC_roles}} }
-
-#-----------------------------------------
 
 =method itemType
 Returns the type of the items collected.
@@ -151,15 +144,14 @@ sub itemType { shift->{UIC_itype} }
 
 =section Maintaining roles
 
-=method addRole ROLE| ( [NAME],OPTIONS ) | ARRAY-OF-OPTIONS
+=method addRole ROLE| ([NAME],OPTIONS) | ARRAY
 
 Adds a new role to this collection.  ROLE is an object of the right type
 (depends on the extension of this module which type that is) or a list
 of OPTIONS which are used to create such role.  The options can also be
-passed as reference to an array.  The added role is returned.
+passed as reference to an ARRAY.  The added role is returned.
 
 =examples
-
  my $uicl = User::Identity::Collection::Locations->new;
 
  my $uil  = User::Identity::Location->new(home => ...);
@@ -175,12 +167,10 @@ Easier
  $ui->add(location => [ 'home', address => 'street 32' ] );
 
 =error Wrong type of role for $collection: requires a $expect but got a $type
-
 Each $collection groups sets of roles of one specific type ($expect).  You
 cannot add objects of a different $type.
 
 =error Cannot create a $type to add this to my collection.
-
 Some options are specified to create a $type object, which is native to
 this collection.  However, for some reason this failed.
 
@@ -208,8 +198,6 @@ sub addRole(@)
     $role;
 }
 
-#-----------------------------------------
-
 =method removeRole ROLE|NAME
 The deleted role is returned (if it existed).
 =cut
@@ -222,9 +210,7 @@ sub removeRole($)
     $role;
 }
 
-#-----------------------------------------
-
-=method renameRole ROLE|OLDNAME, NEWNAME
+=method renameRole <ROLE|OLDNAME>, NEWNAME
 Give the role a different name, and move it in the collection.
 
 =error Cannot rename $name into $newname: already exists
@@ -250,8 +236,6 @@ sub renameRole($$$)
     $self->{UIC_roles}{$newname} = $role;
 }
 
-#-----------------------------------------
-
 =method sorted
 Returns the roles sorted by name, alphabetically and case-sensitive.
 =cut
@@ -263,7 +247,6 @@ sub sorted() { sort {$a->name cmp $b->name} shift->roles}
 =section Searching
 
 =method find NAME|CODE|undef
-
 Find the object with the specified NAME in this collection.  With C<undef>,
 a randomly selected role is returned.
 
@@ -299,8 +282,6 @@ sub find($)
     : wantarray        ? grep ({ $select->($_, $self) } $self->roles)
     :                    first { $select->($_, $self) } $self->roles;
 }
-
-#-----------------------------------------
 
 1;
 

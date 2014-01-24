@@ -88,7 +88,7 @@ sub init($)
     $self;
 }
 
-=method from FILEHANDLE|FILENAME|ARRAY, OPTIONS
+=method from <FILEHANDLE|FILENAME|ARRAY>, OPTIONS
 Read the plain text information from the specified FILEHANDLE, FILENAME,
 STRING, or ARRAY of lines.
 
