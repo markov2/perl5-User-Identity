@@ -3,6 +3,18 @@ Revision history for module User::Identity.
 All changes are made by Mark Overmeer <userid@overmeer.net> unless
 explicitly stated differently.
 
+version 0.96: Mon Sep 19 23:15:07 CEST 2016
+
+	Fixes:
+	- include examples in the manual-pages
+
+version 0.95:
+
+	Improvements:
+	- move t/99pod.t to xt/ and remove dependency on Test::Pod
+	- spell checks from Debian.
+	  rt.cpan.org#92483 [Salvatore Bonaccorso]
+
 version 0.94: Fri Jan 24 10:55:26 CET 2014
 
 	Improvements:

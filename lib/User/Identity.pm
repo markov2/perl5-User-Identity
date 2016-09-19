@@ -124,7 +124,7 @@ sub user() { shift }
 =section Attributes
 
 =method charset
-The user's prefered character set, which defaults to the value of
+The user's preferred character set, which defaults to the value of
 LC_CTYPE environment variable.
 
 =cut

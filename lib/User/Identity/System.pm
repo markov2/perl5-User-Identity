@@ -46,7 +46,7 @@ in the OPTION list.  Without a specific name, the organization is used as name.
 =option  hostname DOMAIN
 =default hostname C<'localhost'>
 
-The hostname of the described system.  It is prefered to use full
+The hostname of the described system.  It is preferred to use full
 system names, not abbreviations.  For instance, you can better use
 C<www.tux.aq> than C<www> to avoid confusion.
 
@@ -60,7 +60,7 @@ also specify a M<User::Identity::Location> OBJECT.
 =default os       undef
 
 The name of the operating system which is run on the server.  It is
-adviced to use the names as used by Perl's C<$^O> variable.  See the
+advised to use the names as used by Perl's C<$^O> variable.  See the
 perlvar man-page for this variable, and perlport for the possible
 values.
 

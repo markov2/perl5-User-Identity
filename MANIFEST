@@ -16,4 +16,4 @@ lib/User/Identity/System.pm
 t/10userid.t
 t/20loc.t
 t/30col.t
-t/99pod.t
+xt/99pod.t

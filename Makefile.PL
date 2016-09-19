@@ -2,15 +2,16 @@ use 5.006;
 
 use ExtUtils::MakeMaker;
 
+my $version = '0.96';
+
 #
 # The following is needed, because User::Identity does gracefully handle
 # a missing Geography::Countries, but is incompatible with older releases.
 #
 
-my %prereq = (Test::Pod => 1.00);
+my %prereq;
 
 my ($gc, $gc_version) = (Geography::Countries => 1.4);
-
 eval "require $gc";
 
 if($@ =~ m/^Can't locate/)
@@ -28,7 +29,7 @@ elsif($gc->VERSION < $gc_version)
 
 WriteMakefile
   ( NAME       => 'User::Identity'
-  , VERSION    => 0.94
+  , VERSION    => $version
   , PREREQ_PM  => \%prereq
   , ABSTRACT   => 'Collect information about a user'
   , AUTHOR     => 'Mark Overmeer <perl@overmeer.net>'
