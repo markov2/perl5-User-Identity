@@ -209,7 +209,6 @@ sub addCollection(@)
     $self->{UI_col}{$object->name} = $object;
 }
 
-#-----------------------------------------
 
 =method removeCollection OBJECT|NAME
 =cut
@@ -222,7 +221,6 @@ sub removeCollection($)
     || delete $self->{UI_col}{$name.'s'};
 }
 
-#-----------------------------------------
 
 =method collection NAME
 
@@ -246,7 +244,6 @@ sub collection($;$)
     wantarray ? $collection->roles : $collection;
 }
 
-#-----------------------------------------
 
 =method add COLLECTION, ROLE
 
@@ -292,35 +289,6 @@ sub add($$)
     $collection->addRole(@_);
 }
 
-#-----------------------------------------
-
-=method find COLLECTION, ROLE
-
-Returns the object with the specified ROLE within the named collection.
-The collection can be specified as name or object.
-
-=examples
-
- my $role  = $me->find(location => 'work');       # one location
- my $role  = $me->collection('location')->find('work'); # same
-
- my $email = $me->addCollection('email');
- $me->find($email => 'work');
- $email->find('work');   # same
-
-=cut
-
-sub find($$)
-{   my $all        = shift->{UI_col};
-    my $collname   = shift;
-    my $collection
-     = ref $collname && $collname->isa('User::Identity::Collect') ? $collname
-     : ($all->{$collname} || $all->{$collname.'s'});
-
-    return () unless defined $collection;
-    $collection->find(shift);
-}
-
 =ci_method type
 Returns a nice symbolic name for the type.
 
@@ -357,6 +325,37 @@ sub user()
 {   my $self   = shift;
     my $parent = $self->parent;
     defined $parent ? $parent->user : undef;
+}
+
+#-----------------------------------------
+
+=section Searching
+
+=method find COLLECTION, ROLE
+
+Returns the object with the specified ROLE within the named collection.
+The collection can be specified as name or object.
+
+=examples
+
+ my $role  = $me->find(location => 'work');       # one location
+ my $role  = $me->collection('location')->find('work'); # same
+
+ my $email = $me->addCollection('email');
+ $me->find($email => 'work');
+ $email->find('work');   # same
+
+=cut
+
+sub find($$)
+{   my $all        = shift->{UI_col};
+    my $collname   = shift;
+    my $collection
+     = ref $collname && $collname->isa('User::Identity::Collect') ? $collname
+     : ($all->{$collname} || $all->{$collname.'s'});
+
+    return () unless defined $collection;
+    $collection->find(shift);
 }
 
 1;

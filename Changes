@@ -3,6 +3,13 @@ Revision history for module User::Identity.
 All changes are made by Mark Overmeer <userid@overmeer.net> unless
 explicitly stated differently.
 
+version 0.97: Thu  2 Feb 15:52:27 CET 2017
+
+	Improvements:
+	- spell checks from Debian.
+	  rt.cpan.org#118328 [Angel Abad]
+	- share podtail with MailBox
+
 version 0.96: Mon Sep 19 23:15:07 CEST 2016
 
 	Fixes:

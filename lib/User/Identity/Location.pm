@@ -140,7 +140,7 @@ The city where the address is located.
 sub city() { shift->{UIL_city} }
 
 =method state
-The state, which is important for some contries but certainly not for
+The state, which is important for some countries but certainly not for
 the smaller ones.  Only set this value when you state has to appear on
 printed addresses.
 
@@ -187,7 +187,7 @@ sub organization() { shift->{UIL_organization} }
 #-----------------------------------------
 
 =method phone
-One or more phone numbers.  Please use the internation notation, which
+One or more phone numbers.  Please use the international notation, which
 starts with C<'+'>, for instance C<+31-26-12131>.  In scalar context,
 only the first number is produced.  In list context, all numbers are
 presented.

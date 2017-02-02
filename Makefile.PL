@@ -2,7 +2,7 @@ use 5.006;
 
 use ExtUtils::MakeMaker;
 
-my $version = '0.96';
+my $version = '0.97';
 
 #
 # The following is needed, because User::Identity does gracefully handle
@@ -48,5 +48,6 @@ LICENSE         = artistic
 FIRST_YEAR      = 2003
 EMAIL           = perl@overmeer.net
 WEBSITE         = http://perl.overmeer.net/userid/
+PODTAIL         = ../MailBox-shared-podtail
 
 __POSTAMBLE
