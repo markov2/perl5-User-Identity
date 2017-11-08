@@ -54,7 +54,7 @@ L<groups of systems|User::Identity::Collection::Systems>
 
 =chapter OVERLOADED
 
-=overload stringification
+=overload stringification 
 Returns the name of the collection and a sorted list of defined items.
 
 =examples
@@ -67,7 +67,7 @@ use overload '""' => sub {
    $self->name . ": " . join(", ", sort map {$_->name} $self->roles);
 };
 
-=overload @{}
+=overload  @{}
 When the reference to a collection object is used as array-reference, it
 will be shown as list of roles.
 
@@ -90,7 +90,7 @@ use overload '@{}' => sub { [ shift->roles ] };
 
 sub type { "people" }
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 =requires item_type CLASS
 The CLASS which is used to store the information for each of the maintained
 objects within this collection.
@@ -127,14 +127,14 @@ sub init($)
 
 =section Attributes
 
-=method roles
+=method roles 
 Returns all defined roles within this collection.  Be warned: the rules
 are returned in random (hash) order.
 =cut
 
 sub roles() { values %{shift->{UIC_roles}} }
 
-=method itemType
+=method itemType 
 Returns the type of the items collected.
 =cut
 
@@ -144,11 +144,11 @@ sub itemType { shift->{UIC_itype} }
 
 =section Maintaining roles
 
-=method addRole ROLE| ([NAME],OPTIONS) | ARRAY
+=method addRole $role| <[$name],%options> | ARRAY
 
-Adds a new role to this collection.  ROLE is an object of the right type
+Adds a new role to this collection.  $role is an object of the right type
 (depends on the extension of this module which type that is) or a list
-of OPTIONS which are used to create such role.  The options can also be
+of %options which are used to create such role.  The options can also be
 passed as reference to an ARRAY.  The added role is returned.
 
 =examples
@@ -198,7 +198,7 @@ sub addRole(@)
     $role;
 }
 
-=method removeRole ROLE|NAME
+=method removeRole $role|$name
 The deleted role is returned (if it existed).
 =cut
 
@@ -210,7 +210,7 @@ sub removeRole($)
     $role;
 }
 
-=method renameRole <ROLE|OLDNAME>, NEWNAME
+=method renameRole <$role|$oldname>, $newname
 Give the role a different name, and move it in the collection.
 
 =error Cannot rename $name into $newname: already exists
@@ -236,7 +236,7 @@ sub renameRole($$$)
     $self->{UIC_roles}{$newname} = $role;
 }
 
-=method sorted
+=method sorted 
 Returns the roles sorted by name, alphabetically and case-sensitive.
 =cut
 
@@ -246,8 +246,8 @@ sub sorted() { sort {$a->name cmp $b->name} shift->roles}
 
 =section Searching
 
-=method find NAME|CODE|undef
-Find the object with the specified NAME in this collection.  With C<undef>,
+=method find $name|CODE|undef
+Find the object with the specified $name in this collection.  With C<undef>,
 a randomly selected role is returned.
 
 When a code reference is specified, all collected roles are scanned one

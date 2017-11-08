@@ -21,7 +21,7 @@ has no use by its own.
 
 =section Constructors
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 =requires name STRING
 A simple name for this item.  Try to give a useful name in the context of
@@ -87,7 +87,7 @@ sub init($)
 
 =section Attributes
 
-=method name [NEWNAME]
+=method name [$newname]
 
 The name of this item.  Names are unique within a collection... a second
 object with the same name within any collection will destroy the already
@@ -104,7 +104,7 @@ sub name(;$)
 
 #-----------------------------------------
 
-=method description
+=method description 
 
 Free format description on this item.  Please do not add
 any significance to the content of this field: if you are in need
@@ -119,15 +119,15 @@ sub description() {shift->{UII_description}}
 
 =section Collections
 
-=method addCollection OBJECT | ([TYPE], OPTIONS)
+=method addCollection $object | <[$type], %options>
 
 Add a new collection of roles to an item.  This can be achieved in two ways:
-either create an M<User::Identity::Collection> OBJECT yourself and then
-pass that to this method, or supply all the OPTIONS needed to create such
+either create an M<User::Identity::Collection> $object yourself and then
+pass that to this method, or supply all the %options needed to create such
 an object and it will be created for you.  The object which is added is
 returned, and can be used for many methods directly.
 
-For OPTIONS, see the specific type of collection.  Additional options are
+For %options, see the specific type of collection.  Additional options are
 listed below.
 
 =requires type STRING|CLASS
@@ -210,7 +210,7 @@ sub addCollection(@)
 }
 
 
-=method removeCollection OBJECT|NAME
+=method removeCollection $object|$name
 =cut
 
 sub removeCollection($)
@@ -222,9 +222,9 @@ sub removeCollection($)
 }
 
 
-=method collection NAME
+=method collection $name
 
-In scalar context the collection object with the NAME is returned.
+In scalar context the collection object with the $name is returned.
 In list context, all the roles within the collection are returned.
 
 =examples
@@ -245,15 +245,15 @@ sub collection($;$)
 }
 
 
-=method add COLLECTION, ROLE
+=method add $collection, $role
 
-The ROLE is added to the COLLECTION.  The COLLECTION is the name of a
+The $role is added to the $collection.  The $collection is the name of a
 collection, which will be created automatically with M<addCollection()> if
-needed.  The COLLECTION can also be specified as existing collection object.
+needed.  The $collection can also be specified as existing collection object.
 
-The ROLE is anything what is acceptable to
+The $role is anything what is acceptable to
 M<User::Identity::Collection::addRole()> of the
-collection at hand, and is returned.  ROLE typically is a list of
+collection at hand, and is returned.  $role typically is a list of
 parameters for one role, or a reference to an array containing these
 values.
 
@@ -289,14 +289,14 @@ sub add($$)
     $collection->addRole(@_);
 }
 
-=ci_method type
+=ci_method type 
 Returns a nice symbolic name for the type.
 
 =cut
 
 sub type { "item" }
 
-=method parent [PARENT]
+=method parent [$parent]
 Returns the parent of an Item (the enclosing item).  This may return C<undef>
 if the object is stand-alone.
 
@@ -311,7 +311,7 @@ sub parent(;$)
     $self->{UII_parent};
 }
 
-=method user
+=method user 
 Go from this object to its parent, to its parent, and so on, until a
 M<User::Identity> is found or the top of the object tree has been
 reached.
@@ -331,9 +331,9 @@ sub user()
 
 =section Searching
 
-=method find COLLECTION, ROLE
+=method find $collection, $role
 
-Returns the object with the specified ROLE within the named collection.
+Returns the object with the specified $role within the named collection.
 The collection can be specified as name or object.
 
 =examples
@@ -351,11 +351,10 @@ sub find($$)
 {   my $all        = shift->{UI_col};
     my $collname   = shift;
     my $collection
-     = ref $collname && $collname->isa('User::Identity::Collect') ? $collname
+     = ref $collname && $collname->isa('User::Identity::Collection') ? $collname
      : ($all->{$collname} || $all->{$collname.'s'});
 
-    return () unless defined $collection;
-    $collection->find(shift);
+    defined $collection ? $collection->find(shift) : ();
 }
 
 1;

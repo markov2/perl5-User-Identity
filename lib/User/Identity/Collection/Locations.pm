@@ -21,7 +21,7 @@ M<User::Identity::Location> objects, each describing a physical location.
 
 =chapter METHODS
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 =default name      C<'locations'>
 =default item_type M<User::Identity::Location>

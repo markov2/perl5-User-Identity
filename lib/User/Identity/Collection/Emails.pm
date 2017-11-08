@@ -22,7 +22,7 @@ in e-mail traffic.
 
 =section Constructors
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 =default name      C<'emails'>
 =default item_type M<Mail::Identity>

@@ -27,7 +27,7 @@ is described in the DETAILS section, below.
 
 =chapter METHODS
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 =option  abbreviations HASH|ARRAY
 =default abbreviations []
@@ -88,8 +88,8 @@ sub init($)
     $self;
 }
 
-=method from <FILEHANDLE|FILENAME|ARRAY>, OPTIONS
-Read the plain text information from the specified FILEHANDLE, FILENAME,
+=method from <$fh|$filename|ARRAY>, %options
+Read the plain text information from the specified $fh, $filename,
 STRING, or ARRAY of lines.
 
 =option  tabstop INTEGER
@@ -285,7 +285,7 @@ sub _collectItem($$)
 
 =section Attributes
 
-=method defaultTabStop [INTEGER]
+=method defaultTabStop [$integer]
 Returns the width of a tab, optionally after setting it.  This must be
 the same as set in your editor.
 =cut
@@ -295,12 +295,12 @@ sub defaultTabStop(;$)
     @_ ? ($self->{UIAP_tabstop} = shift) : $self->{UIAP_tabstop};
 }
 
-=method abbreviation NAME, [CLASS]
+=method abbreviation $name, [$class]
 Returns the class which is capable of storing information which is
-grouped as NAME.  With CLASS argument, you add (or overrule) the
-definitions of an abbreviation.  The CLASS is automatically loaded.
+grouped as $name.  With $class argument, you add (or overrule) the
+definitions of an abbreviation.  The $class is automatically loaded.
 
-If CLASS is C<undef>, then the abbreviation is deleted.  The class
+If $class is C<undef>, then the abbreviation is deleted.  The class
 name which is deleted is returned.
 
 =cut
@@ -318,7 +318,7 @@ sub abbreviation($;$)
     $self->{UIAP_abbrev}{$name} = $class;
 }
 
-=method abbreviations
+=method abbreviations 
 Returns a sorted list of all names which are known as abbreviations.
 
 =cut

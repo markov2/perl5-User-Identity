@@ -52,7 +52,7 @@ object.
 
 sub type() { "email" }
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 =default name    <phrase or user's fullName>
 
@@ -122,9 +122,9 @@ sub init($)
 
 =section Constructors
 
-=method from OBJECT
+=method from $object
 
-Convert an OBJECT into a C<Mail::Identity>.  On the moment, you can
+Convert an $object into a C<Mail::Identity>.  On the moment, you can
 specify M<Mail::Address> and M<User::Identity> objects.  In the
 former case, a new C<Mail::Identity> is created containing the same
 information.  In the latter, the first address of the user is picked
@@ -177,7 +177,7 @@ sub comment($)
     $self->phrase eq $full ? undef : $full;
 }
 
-=method charset
+=method charset 
 Returns the character set used in comment and phrase.  When set to
 C<undef>, the strings (are already encoded to) contain only ASCII
 characters.  This defaults to the value of the user's charset, if a user
@@ -193,7 +193,7 @@ sub charset()
     $user->charset;
 }
 
-=method language
+=method language 
 Returns the language which is used for the description fields of this
 e-mail address, which defaults to the user's language.
 
@@ -208,7 +208,7 @@ sub language()
     $user->language;
 }
 
-=method domain
+=method domain 
 The domain is the part of the e-mail address after the C<@>-sign.
 When this is not defined, it can be deducted from the email address
 (see M<address()>).  If nothing is known, C<localhost> is returned.
@@ -224,7 +224,7 @@ sub domain()
     $address =~ s/.*?\@// ? $address : undef;
 }
 
-=method address
+=method address 
 Returns the e-mail address for this role.  If none was specified, it will
 be constructed from the username and domain.  If those are not present
 as well, then the M<name()> is used when it contains a C<@>, else the
@@ -246,7 +246,7 @@ sub address()
     defined $user ? $user->nickname : $name;
 }
 
-=method location
+=method location 
 Returns the object which describes to which location this mail address relates.
 The location may be used to find the name of the organization involved, or
 to create a signature.  If no location is specified, but a user is defined
@@ -271,7 +271,7 @@ sub location()
     $location;
 }
 
-=method organization
+=method organization 
 Returns the organization which relates to this e-mail identity.  If not
 explicitly specified, it is tried to be found via the location.
 
@@ -287,7 +287,7 @@ sub organization()
 }
 
 #pgp_key
-=method phrase
+=method phrase 
 The phrase is used in an e-mail address to explain who is sending the
 message.  This usually is the fullname (the user's fullname is used by
 default), description of your function (Webmaster), or any other text.
@@ -308,7 +308,7 @@ sub phrase()
 
 #signature
 
-=method username
+=method username 
 Returns the username of this e-mail address.  If none is specified, first
 it is tried to extract it from the specified e-mail address.  If there is
 also no username in the e-mail address, the user identity's nickname is

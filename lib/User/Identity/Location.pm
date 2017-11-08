@@ -41,7 +41,7 @@ country specific output.
 
 sub type { "location" }
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 Create a new location.  You can specify a name as first argument, or
 in the OPTION list.  Without a specific name, the organization is used as name.
@@ -98,7 +98,7 @@ sub init($)
 
 =section Attributes
 
-=method street
+=method street 
 Returns the address of this location.  Since Perl 5.7.3, you can use
 unicode in strings, so why not format the address nicely?
 
@@ -106,7 +106,7 @@ unicode in strings, so why not format the address nicely?
 
 sub street() { shift->{UIL_street} }
 
-=method postalCode
+=method postalCode 
 The postal code is very country dependent.  Also, the location of the
 code within the formatted string is country dependent.
 
@@ -114,7 +114,7 @@ code within the formatted string is country dependent.
 
 sub postalCode() { shift->{UIL_postal_code} }
 
-=method pobox
+=method pobox 
 
 Post Office mail box specification.  Use C<"P.O.Box 314">, not simple C<314>.
 
@@ -122,7 +122,7 @@ Post Office mail box specification.  Use C<"P.O.Box 314">, not simple C<314>.
 
 sub pobox() { shift->{UIL_pobox} }
 
-=method poboxPostalCode
+=method poboxPostalCode 
 The postal code related to the Post-Office mail box.  Defined by new() option
 C<pobox_pc>.
 
@@ -132,14 +132,14 @@ sub poboxPostalCode() { shift->{UIL_pobox_pc} }
 
 #-----------------------------------------
 
-=method city
+=method city 
 The city where the address is located.
 
 =cut
 
 sub city() { shift->{UIL_city} }
 
-=method state
+=method state 
 The state, which is important for some countries but certainly not for
 the smaller ones.  Only set this value when you state has to appear on
 printed addresses.
@@ -148,7 +148,7 @@ printed addresses.
 
 sub state() { shift->{UIL_state} }
 
-=method country
+=method country 
 The country where the address is located.  If the name of the country is
 not known but a country code is defined, the name will be looked-up
 using M<Geography::Countries> (if installed).
@@ -169,7 +169,7 @@ sub country()
     scalar Geography::Countries::country($cc);
 }
 
-=method countryCode
+=method countryCode 
 Each country has an ISO standard abbreviation.  Specify the country or the
 country code, and the other will be filled in automatically.
 
@@ -177,7 +177,7 @@ country code, and the other will be filled in automatically.
 
 sub countryCode() { shift->{UIL_country_code} }
 
-=method organization
+=method organization 
 The organization (for instance company) which is related to this location.
 
 =cut
@@ -186,7 +186,7 @@ sub organization() { shift->{UIL_organization} }
 
 #-----------------------------------------
 
-=method phone
+=method phone 
 One or more phone numbers.  Please use the international notation, which
 starts with C<'+'>, for instance C<+31-26-12131>.  In scalar context,
 only the first number is produced.  In list context, all numbers are
@@ -202,7 +202,7 @@ sub phone()
     wantarray ? @phone : $phone[0];
 }
     
-=method fax
+=method fax 
 One or more fax numbers, like M<phone()>.
 
 =cut
@@ -217,7 +217,7 @@ sub fax()
 
 #-----------------------------------------
 
-=method fullAddress
+=method fullAddress 
 Create an address to put on a postal mailing, in the format as normal in
 the country where it must go to.  To be able to achieve that, the country
 code must be known.  If the city is not specified or no street or pobox is

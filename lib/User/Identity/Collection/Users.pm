@@ -19,7 +19,7 @@ M<User::Identity> objects, each describing a user.
 
 =chapter METHODS
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 =default name      C<'people'>
 =default item_type M<User::Identity>

@@ -38,7 +38,7 @@ Nearly all methods can return undef.
 
 sub type { "network" }
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 Create a new system.  You can specify a name as first argument, or
 in the OPTION list.  Without a specific name, the organization is used as name.
@@ -90,31 +90,31 @@ sub init($)
 }
 
 =section Attributes
-=method hostname
+=method hostname 
 
 =cut
 
 sub hostname() { shift->{UIS_hostname} }
 
-=method username
+=method username 
 
 =cut
 
 sub username() { shift->{UIS_username} }
 
-=method os
+=method os 
 
 =cut
 
 sub os() { shift->{UIS_os} }
 
-=method password
+=method password 
 
 =cut
 
 sub password() { shift->{UIS_password} }
 
-=method location
+=method location 
 
 Returns the object which describes to which location this system relates.
 The location may be used to find the name of the organization involved, or

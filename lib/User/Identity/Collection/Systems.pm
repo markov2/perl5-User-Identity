@@ -20,7 +20,7 @@ user on some system.
 
 =chapter METHODS
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 =default name      C<'systems'>
 =default item_type M<User::Identity::System>

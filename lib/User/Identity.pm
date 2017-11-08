@@ -37,7 +37,7 @@ module author.
 
 =chapter OVERLOADED
 
-=method stringification
+=method stringification 
 
 When an C<User::Identity> is used as string, it is automatically
 translated into the fullName() of the user involved.
@@ -56,12 +56,12 @@ use overload '""' => 'fullName';
 
 =chapter METHODS
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 Create a new user identity, which will contain all data related 
 to a single physical human being.  Most user data can only be
 specified at object construction, because they should never
-change.  A NAME may be specified as first argument, but also
+change.  A $name may be specified as first argument, but also
 as option, one way or the other is required.
 
 =option  charset STRING
@@ -123,7 +123,7 @@ sub user() { shift }
 
 =section Attributes
 
-=method charset
+=method charset 
 The user's preferred character set, which defaults to the value of
 LC_CTYPE environment variable.
 
@@ -131,7 +131,7 @@ LC_CTYPE environment variable.
 
 sub charset() { shift->{UI_charset} || $ENV{LC_CTYPE} }
 
-=method nickname
+=method nickname 
 Returns the user's nickname, which could be used as username, e-mail
 alias, or such.  When no nickname was explicitly specified, the name is
 used.
@@ -144,7 +144,7 @@ sub nickname()
     # TBI: If OS-specific info exists, then username
 }
 
-=method firstname
+=method firstname 
 Returns the first name of the user.  If it is not defined explicitly, it
 is derived from the nickname, and than capitalized if needed.
 
@@ -155,7 +155,7 @@ sub firstname()
     $self->{UI_firstname} || ucfirst $self->nickname;
 }
 
-=method initials
+=method initials 
 The initials, which may be derived from the first letters of the
 firstname.
 
@@ -178,21 +178,21 @@ sub initials()
     }
 }
 
-=method prefix
+=method prefix 
 The words which are between the firstname (or initials) and the surname.
 
 =cut
 
 sub prefix() { shift->{UI_prefix} }
 
-=method surname
+=method surname 
 Returns the surname of person, or C<undef> if that is not known.
 
 =cut
 
 sub surname() { shift->{UI_surname} }
 
-=method fullName
+=method fullName 
 If this is not specified as value during object construction, it is
 guessed based on other known values like "firstname prefix surname". 
 If a surname is provided without firstname, the nickname is taken
@@ -223,7 +223,7 @@ sub fullName()
     $full;
 }
 
-=method formalName
+=method formalName 
 Returns a formal name for the user.  If not defined as instantiation
 parameter (see new()), it is constructed from other available information,
 which may result in an incorrect or an incomplete name.  The result is
@@ -246,7 +246,7 @@ sub formalName()
        , @$self{ qw/UI_prefix UI_surname UI_titles/ };
 }
 
-=method courtesy
+=method courtesy 
 The courtesy is used to address people in a very formal way.  Values
 are like "Mr.", "Mrs.", "Sir", "Frau", "Heer", "de heer", "mevrouw".
 This often provides a way to find the gender of someone addressed.
@@ -306,7 +306,7 @@ sub courtesy()
     $table->{$lang};
 }
 
-=method language
+=method language 
 Can contain a list or a single language name, as defined by the RFC
 Examples are 'en', 'en-GB', 'nl-BE'.  The default language  is 'en'
 (English).
@@ -321,7 +321,7 @@ Examples are 'en', 'en-GB', 'nl-BE'.  The default language  is 'en'
 
 sub language() { shift->{UI_language} || 'en' }
 
-=method gender
+=method gender 
 Returns the specified gender of the person, as specified during
 instantiation, which could be like 'Male', 'm', 'homme', 'man'.
 There is no smart behavior on this: the exact specified value is
@@ -331,7 +331,7 @@ returned. Methods isMale(), isFemale(), and courtesy() are smart.
 
 sub gender() { shift->{UI_gender} }
 
-=method isMale
+=method isMale 
 Returns true if we are sure that the user is male.  This is specified as
 gender at instantiation, or derived from the courtesy value.  Methods
 isMale and isFemale are not complementatory: they can both return false
@@ -355,7 +355,7 @@ sub isMale()
     undef;
 }
 
-=method isFemale
+=method isFemale 
 See isMale(): return true if we are sure the user is a woman.
 
 =cut
@@ -376,14 +376,14 @@ sub isFemale()
     undef;
 }
 
-=method dateOfBirth
+=method dateOfBirth 
 Returns the date of birth, as specified during instantiation.
 
 =cut
 
 sub dateOfBirth() { shift->{UI_birth} }
 
-=method birth
+=method birth 
 Returns the date in standardized format: YYYYMMDD, easy to sort and
 select.  This may return C<undef>, even if the M<dateOfBirth()> contains
 a value, simply because the format is not understood. Month or day may
@@ -416,7 +416,7 @@ sub birth()
     undef;
 }
 
-=method age
+=method age 
 Calcuted from the datge of birth to the current moment, as integer.  On the
 birthday, the number is incremented already.
 
@@ -434,7 +434,7 @@ sub age()
     $age;
 }
 
-=method titles
+=method titles 
 The titles, degrees in education or of other kind.  If these are complex,
 you may need to specify the formal name of the users as well, because
 smart formatting probably failes.

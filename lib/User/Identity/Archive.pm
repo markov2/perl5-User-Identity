@@ -30,7 +30,7 @@ which can be stored.
 
 sub type { "archive" }
 
-=c_method new [NAME], OPTIONS
+=c_method new [$name], %options
 
 =option  from FILEHANDLE|FILENAME
 =default from C<undef>
@@ -52,9 +52,9 @@ sub init($)
 
 =section Access to the archive
 
-=method from SOURCE, OPTIONS
-Read definitions from the specified SOURCE, which usually can be a
-filehandle or filename.  The syntax used in the information SOURCE
+=method from $source, %options
+Read definitions from the specified $source, which usually can be a
+filehandle or filename.  The syntax used in the information $source
 is archiver dependent.
 
 Not all archivers implement C<from()>, so you may want to check with
