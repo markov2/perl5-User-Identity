@@ -1,0 +1,16 @@
+Changes
+Makefile.PL
+Mail/Identity.pm
+Mail/Makefile.PL
+User/Identity.pm
+User/Identity/Location.pm
+User/Identity/Collection.pm
+User/Identity/Collection/Locations.pm
+User/Identity/Collection/Emails.pm
+User/Identity/Collection/Item.pm
+User/Makefile.PL
+MANIFEST
+README
+t/10userid.t
+t/20loc.t
+t/30col.t

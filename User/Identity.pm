@@ -2,8 +2,7 @@ package User::Identity;
 
 use strict;
 use warnings;
-
-our $VERSION = '0.01';
+use Carp qw/croak/;
 
 =head1 NAME
 
@@ -29,13 +28,17 @@ contact the author.
 
 =head1 METHODS
 
-=over 4
+=cut
+
+#-----------------------------------------
+
+=head2 Initiation
 
 =cut
 
 #-----------------------------------------
 
-=item new [NICKNAME], OPTIONS
+=c_method new [NICKNAME], OPTIONS
 
 Create a new user identity, which will contain all data related 
 to a single physical human being.  Most user data can only be
@@ -43,35 +46,44 @@ specified at object construction, because they should never
 change.  A NICKNAME may be specified as first argument, but also
 as option.
 
-Available OPTIONS:
+=option  charset STRING
+=default charset 'us-ascii'
 
-=over 4
+=option  courtesy STRING
+=default courtesy undef
 
-=item * charset => STRING
+=option  date_of_birth DATE
+=default date_of_birth undef
 
-=item * courtesy => STRING
+=option  firstname STRING
+=default firstname undef
 
-=item * date_of_birth => DATE
-
-=item * firstname => STRING
-
-=item * full_name => STRING
+=option  full_name STRING
+=default full_name undef
  
-=item * formal_name => STRING
+=option  formal_name STRING
+=default formal_name undef
 
-=item * initials => STRING
+=option  initials STRING
+=default initials undef
 
-=item * nickname => STRING
+=option  nickname STRING
+=default nickname undef
 
-=item * gender => STRING
+=option  gender STRING
+=default gender undef
 
-=item * language => STRING
+=option  language STRING
+=default language undef
 
-=item * prefix => STRING
+=option  prefix STRING
+=default prefix undef
 
-=item * surname => STRING
+=option  surname STRING
+=default surname undef
 
-=item * titles => STRING
+=option  titles STRING
+=default titles undef
 
 =cut
 
@@ -106,7 +118,7 @@ titles
 
    if(keys %$args)
    {   require Carp;
-       local $" = ', ';
+       local $" = ', ';    # "
        Carp::croak("Unknown options: @{ [keys %$args ] }");
    }
 
@@ -115,7 +127,36 @@ titles
 
 #-----------------------------------------
 
-=item charset
+=head2 Overloading
+
+=cut
+
+#-----------------------------------------
+
+=method stringification
+
+When an User::Identity is used as string, it is automatically
+translated into the fullName() of the user involved.
+
+=examples
+
+ my $me = User::Identity->new(...)
+ print $me;          # same as  print $me->fullName
+ print "I am $me\n"; # also stringification
+
+=cut
+
+use overload '""' => 'fullName';
+
+#-----------------------------------------
+
+=head2 Attributes
+
+=cut
+
+#-----------------------------------------
+
+=method charset
 
 The user's prefered character set.
 
@@ -125,7 +166,7 @@ sub charset() { shift->{UI_charset} || $ENV{LC_CTYPE} || $ENV{LC_ALL} }
 
 #-----------------------------------------
 
-=item nickname
+=method nickname
 
 Returns the user's nickname, which could be used as username, e-mail
 alias, or such.  When no nick is specified, firstname() is called,
@@ -148,7 +189,7 @@ sub nickname()
 
 #-----------------------------------------
 
-=item firstname
+=method firstname
 
 =cut
 
@@ -165,7 +206,7 @@ sub firstname()
 
 #-----------------------------------------
 
-=item initials
+=method initials
 
 The initials, which may be derived from the first letters of the
 firstname.
@@ -191,7 +232,7 @@ sub initials()
 
 #-----------------------------------------
 
-=item prefix
+=method prefix
 
 The words which are between the firstname (or initials) and the surname.
 
@@ -201,7 +242,7 @@ sub prefix() { shift->{UI_prefix} }
 
 #-----------------------------------------
 
-=item surname
+=method surname
 
 Returns the surname of person, or C<undef> if that is not known.
 
@@ -211,10 +252,14 @@ sub surname() {shift->{UI_surname}}
 
 #-----------------------------------------
 
-=item fullName
+=method fullName
 
 If this is not specified as value during object construction, it is
 guessed based on other known values like "firstname prefix surname". 
+If a surname is provided without firstname, the nickname is taken
+as firstname.  When a firstname is provided without surname, the
+nickname is taken as surname.  If both are not provided, then
+the nickname is used as fullname.
 
 =cut
 
@@ -224,8 +269,11 @@ sub fullName()
     return $self->{UI_full_name}
        if defined $self->{UI_full_name};
 
-    my $full = join ' ', grep {defined $_}
-                   @$self{ qw/UI_firstname UI_prefix UI_surname/ };
+    my ($first, $prefix, $surname) = @$self{ qw/UI_firstname UI_prefix UI_surname/};
+    $surname = ucfirst $self->nickname if  defined $first && ! defined $surname;
+    $first   = ucfirst $self->nickname if !defined $first &&   defined $surname;
+    
+    my $full = join ' ', grep {defined $_} ($first,$prefix,$surname);
 
     $full = ucfirst(lc $self->{UI_nickname})
        if !length $full && defined $self->{UI_nickname};
@@ -237,7 +285,7 @@ sub fullName()
 
 #-----------------------------------------
 
-=item formalName
+=method formalName
 
 Returns a formal name for the user.  If not defined as instantiation
 parameter, it is constructed from other available information, which
@@ -263,7 +311,7 @@ sub formalName()
 
 #-----------------------------------------
 
-=item courtesy
+=method courtesy
 
 The courtesy is used to address people in a very formal way.  Values
 are like "Mr.", "Mrs.", "Sir", "Frau", "Heer", "de heer", "mevrouw".
@@ -327,7 +375,7 @@ sub courtesy()
 
 #-----------------------------------------
 
-=item language
+=method language
 
 Can contain a list or a single language name, as defined by the RFC
 Examples are 'en', 'en-GB', 'nl-BE'.
@@ -357,7 +405,7 @@ sub language()
 
 #-----------------------------------------
 
-=item gender
+=method gender
 
 Returns the specified gender of the person, as specified during
 instantiation, which could be like 'Male', 'm', 'homme', 'man'.
@@ -370,7 +418,7 @@ sub gender() { shift->{UI_gender} }
 
 #-----------------------------------------
 
-=item isMale
+=method isMale
 
 Returns true if we are sure that the user is male.  This is specified as
 gender at instantiation, or derived from the courtesy value.  Method
@@ -397,7 +445,7 @@ sub isMale()
 
 #-----------------------------------------
 
-=item isFemale
+=method isFemale
 
 See isMale(): return true if we are sure it is a woman.
 
@@ -421,7 +469,7 @@ sub isFemale()
 
 #-----------------------------------------
 
-=item dateOfBirth
+=method dateOfBirth
 
 Returns the date of birth, as specified during instantiation.
 
@@ -431,7 +479,7 @@ sub dateOfBirth() {shift->{UI_date_of_birth}}
 
 #-----------------------------------------
 
-=item birth
+=method birth
 
 Returns the date in standardized format: YYYYMMDD, easy to sort and
 select.  This may return undef, even if the dateOfBirth() contains
@@ -467,7 +515,7 @@ sub birth()
 
 #-----------------------------------------
 
-=item age
+=method age
 
 Calcuted from the datge of birth to the current moment, as integer.  On the
 birthday, the number is incremented already.
@@ -488,7 +536,7 @@ sub age()
 
 #-----------------------------------------
 
-=item titles
+=method titles
 
 The titles, degrees in education or of other kind.  If these are complex, you
 may need to specify a formal name as well because formatting sometimes
@@ -500,24 +548,172 @@ sub titles() { shift->{UI_titles} }
 
 #-----------------------------------------
 
-=back
-
-=head1 SEE ALSO
-
-User::Identity can be used in combination with Mail::Identity.
-
-=head1 AUTHOR
-
-Mark Overmeer, E<lt>mark@overmeer.netE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2003 by Mark Overmeer
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself. 
+=head2 Collections
 
 =cut
+
+#-----------------------------------------
+
+=method addCollection OBJECT | ([TYPE], OPTIONS)
+
+Add a new collect of roles to the user.  This can be achieved in two ways:
+either create anu User::Identity::Collection OBJECT yourself and then
+pass that to this method, or supply all the OPTIONS needed to create such
+an object and it will be created for you.  The object which is added is
+returned.
+
+For OPTIONS, see the specific type of collection.  Additional options are
+listed below.
+
+=option  type STRING|CLASS
+=default type <required>
+
+The nickname of a collection class or the CLASS name itself of the
+object to be created.  Required if an object has to be created.
+Predefined type nicknames are C<email> and C<location>.
+
+=examples
+
+ my $me   = User::Identity->new(...);
+ my $locs = User::Identity::Collection::Locations->new();
+ $me->addCollection($locs);
+
+ my $email = $me->addCollection(type => 'email');
+ my $email = $me->addCollection('email');
+
+=error $object is not a collection.
+
+The first argument is an object, but not of a class which extends
+User::Identity::Collection.
+
+=error Don't know what type of collection you want to add.
+
+If you add a collection, it must either by a collection object or a
+list of options which can be used to create a collection object.  In
+the latter case, the type of collection must be specified.
+
+=error Cannot load collection module $type ($class).
+
+Either the specified $type does not exist, or that module named $class returns
+compilation errors.  If the type as specified in the warning is not
+the name of a package, you specified a nickname which was not defined.
+Maybe you forgot the 'require' the package which defines the nickname.
+
+=error Creation of a collection via $class failed.
+
+The $class did compile, but it was not possible to create an object
+of that class using the options you specified.
+
+=cut
+
+our %collectors =
+ ( emails    => 'User::Identity::Collection::Emails'
+ , locations => 'User::Identity::Collection::Locations'
+ );  # *s is tried as well, so email and location work too.
+
+sub addCollection(@)
+{   my $self = shift;
+    return unless @_;
+
+    my $object;
+    if(ref $_[0])
+    {   $object = shift;
+        croak "ERROR: $object is not a collection"
+           unless $object->isa('User::Identity::Collection');
+    }
+    else
+    {   unshift @_, 'type' if @_ % 2;
+        my %args  = @_;
+        my $type  = delete $args{type};
+
+        croak "ERROR: Don't know what type of collection you want to add"
+           unless $type;
+
+        my $class = $collectors{$type} || $collectors{$type.'s'} || $type;
+        eval "require $class";
+        croak "ERROR: Cannot load collection module $type ($class)"
+           if $@;
+
+        $object = $class->new(%args);
+        croak "ERROR: Creation of a collection via $class failed"
+           unless defined $object;
+    }
+
+    $object->user($self);
+    $self->{UI_col}{$object->name} = $object;
+}
+
+#-----------------------------------------
+
+=method collection NAME
+
+In scalar context with only a NAME, the collection object is returned.
+In list context, all the roles within the collection are returned.
+
+=examples
+
+ my @roles = $me->collection('email');        # list of collected items
+ my @roles = $me->collection('email')->roles; # same of collected items
+ my $coll  = $me->collection('email');        # a User::Identity::Collection
+
+=cut
+
+sub collection($;$)
+{   my $self       = shift;
+    my $collname   = shift;
+    my $collection
+      = $self->{UI_col}{$collname} || $self->{UI_col}{$collname.'s'} || return;
+
+    wantarray ? $collection->roles : $collection;
+}
+
+#-----------------------------------------
+
+=method add COLLECTION, ROLE
+
+The ROLE is added to the COLLECTION.  The COLLECTION is the name of a
+collection, which will be created automatically with addCollection if
+needed.  The ROLE is anything what is acceptable to addRole() of the
+collection at hand, and is returned.
+
+=examples
+
+ my $ui   = User::Identity->new(...);
+ my $home = $ui->add(location => [home => street => '27 Roadstreet', ...] );
+ my $work = $ui->add(location => work, tel => '+31-2231-342-13', ... );
+
+ my $travel = User::Identity::Location->new(travel => ...);
+ $ui->add(location => $travel);
+
+=cut
+
+sub add($$)
+{   my ($self, $collname) = (shift, shift);
+    my $collection = $self->collection($collname) || $self->addCollection($collname);
+    $collection->addRole(@_);
+}
+
+#-----------------------------------------
+
+=method find COLLECTION, ROLE
+
+Returns the object with the specified ROLE within the named collection.
+
+=examples
+
+ my $role  = $me->find(location => 'work');       # one location
+ my $role  = $me->collection('location')->find('work'); # same
+
+=cut
+
+sub find($$)
+{   my $all        = shift->{UI_col};
+    my $collname   = shift;
+    my $collection = $all->{$collname} || $all->{$collname.'s'} || return;
+    $collection->find(shift);
+}
+
+#-----------------------------------------
 
 1;
 

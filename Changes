@@ -1,0 +1,20 @@
+
+Revision history for Perl extension User::Identity.
+
+version 0.02
+
+	Improvements:
+
+	- extended User::Identity with collection handling.
+
+	- implemented new classes:
+		Mail::Identity
+		User::Identity::Location
+		User::Identity::Collection
+		User::Identity::Collection::Locations
+		User::Identity::Collection::Item
+		User::Identity::Collection::Emails
+
+version 0.01  Thu Jan 30 17:22:28 CET 2003
+	- original version
+

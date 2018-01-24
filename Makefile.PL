@@ -4,7 +4,8 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile
   ( NAME          => 'User::Identity'
-  , VERSION_FROM  => 'Identity.pm'
+  , VERSION_FROM  => 'User/Identity.pm'
+  , DIR           => [ 'User', 'Mail' ]
   , PREREQ_PM     =>
       { Geography::Countries => 1.4
       }
