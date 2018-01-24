@@ -22,7 +22,7 @@ User::Identity::Location - physical location of a person
  # Simpler
 
  use User::Identity;
- my $me   = User::Indentity->new(...);
+ my $me   = User::Identity->new(...);
  my $addr = $me->add(location => ...);
 
 =head1 DESCRIPTION

@@ -4,7 +4,7 @@ use base 'User::Identity::Collection';
 use strict;
 use warnings;
 
-use Mail::Identity;
+use User::Identity::System;
 
 =head1 NAME
 
@@ -14,9 +14,9 @@ User::Identity::Collection::Systems - a collection of system descriptions
 
 =head1 DESCRIPTION
 
-The User::Identity::Collection::Email object maintains a set
-Mail::Identity objects, each describing a role which the user has
-in e-mail traffic.
+The User::Identity::Collection::Systems object maintains a set
+Use:::Identity::System objects, each describing a login for the
+user on some system.
 
 =head1 METHODS
 
@@ -35,7 +35,7 @@ in e-mail traffic.
 
 sub new(@)
 {   my $class = shift;
-    $class->SUPER::new(emails => @_);
+    $class->SUPER::new(systems => @_);
 }
 
 sub init($)

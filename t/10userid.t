@@ -60,8 +60,13 @@ is($e->charset, 'iso-8859-15',               "Check e charset");
 is($e->fullName, 'Mark Overmeer',            "Check e full");
 is($e->formalName, 'De heer M.A.C.J. Overmeer drs.',  "Check e fullname");
 is($e->dateOfBirth, 'April 5, 1966',         "check e birthday");
-is($e->birth, "19660405",                    "check e birth");
-cmp_ok($e->age, '>=', 36,                    "check e age");
+
+eval "require Date::Parse";
+if($@) {ok(1);ok(1)}
+else
+{  is($e->birth, "19660405",                    "check e birth");
+   cmp_ok($e->age, '>=', 36,                    "check e age");
+}
 
 my $f = $ui->new('am'
  , firstname => 'Anne-Marie Christina Theodora Pluk'

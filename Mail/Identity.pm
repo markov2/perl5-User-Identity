@@ -15,14 +15,14 @@ Mail::Identity - an e-mail role
 
  use User::Identity;
  use Mail::Identity;
- my $me   = User::Indentity->new(...);
+ my $me   = User::Identity->new(...);
  my $addr = Mail::Identity->new(...);
  $me->add(email => $addr);
 
  # Simpler
 
  use User::Identity;
- my $me   = User::Indentity->new(...);
+ my $me   = User::Identity->new(...);
  my $addr = $me->add(email => ...);
 
 =head1 DESCRIPTION
@@ -32,10 +32,10 @@ a human when sending e-mail.  Most people have more than one role these
 days: for instance, a private and a company role with different e-mail
 addresses.
 
-An Mail::Internet object combines an e-mail address, user description
+An Mail::Identity object combines an e-mail address, user description
 ("phrase"), a signature, pgp-key, and so on.  All fields are optional,
 and some fields are smart.  One such set of data represents one role.
-Mail::Internet is therefore the smart cousine of the Mail::Address object.
+Mail::Identity is therefore the smart cousine of the Mail::Address object.
 
 =head1 METHODS
 

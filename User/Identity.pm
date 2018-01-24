@@ -12,7 +12,7 @@ User::Identity - maintains info about a physical person
 =head1 SYNOPSIS
 
  use User::Identity;
- my $me = User::Indentity->new
+ my $me = User::Identity->new
   ( 'john'
   , firstname => 'John'
   , surname   => 'Doe'
