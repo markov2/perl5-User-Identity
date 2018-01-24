@@ -1,4 +1,5 @@
 package User::Identity::Collection::Item;
+use base 'User::Identity::Item';
 
 use strict;
 use warnings;
@@ -9,7 +10,7 @@ use Carp         qw/carp croak/;
 
 =head1 NAME
 
-User::Identity::Collection::Item - bae class for any collectable item
+User::Identity::Collection::Item - base class for any collectable item
 
 =head1 SYNOPSIS
 
@@ -28,24 +29,11 @@ contain data to be collected.
 
 =c_method new [NAME], OPTIONS
 
-=option  name STRING
-=default name <required>
-
-A simple name for this location, like 'home' or 'work'.
-
 =option  user OBJECT
 =default user undef
 
 Refers to the user (a User::Identity object) who has this item in one of
 his/het collections.  The item may be unrelated to any user.
-
-=warning Unknown option $name
-
-One used option is not defined.
-
-=warning Unknown options @names
-
-More than one option is not defined.
 
 =error Each collectable item requires a name
 
@@ -54,35 +42,14 @@ unique within one collection.
 
 =cut
 
-sub new(@)
-{   my $class = shift;
-    return undef unless @_;       # no empty users.
-
-    unshift @_, 'name' if @_ %2;  # odd-length list: starts with nick
-
-    my %args = @_;
-    my $self = (bless {}, $class)->init(\%args);
-
-    if(my @missing = keys %args)
-    {   local $" = ', ';
-        carp "WARNING: Unknown ".(@missing==1 ? 'option' : 'options')." @missing";
-    }
-
-    $self;
-}
-
 sub init($)
-{   my ($self, $args) = @_;
-
-   unless($self->{UICI_name} = delete $args->{name})
-   {   croak "ERROR: Each collectable item requires a name.";
-   }
+{  my ($self, $args) = @_;
 
    if(my $user = delete $args->{user})
    {   $self->user($user);
    }
 
-   $self;
+   $self->SUPER::init($args);
 }
 
 #-----------------------------------------
@@ -90,21 +57,6 @@ sub init($)
 =head2 Attributes
 
 =cut
-
-#-----------------------------------------
-
-=method name
-
-Reports the logical name for this location.  This is the specified name or, if
-that was not specified, the name of the organization.  This will always return
-a valid string.
-
-=cut
-
-sub name()
-{   my $self = shift;
-    $self->{UICI_name} || $self->{UICI_organization};
-}
 
 #-----------------------------------------
 

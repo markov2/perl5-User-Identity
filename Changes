@@ -1,6 +1,20 @@
 
 Revision history for Perl extension User::Identity.
 
+version 0.03: Fri Mar  7 23:26:25 CET 2003
+
+	Improvements:
+
+	- implemented new classes:
+		User::Identity::Item
+		User::Identity::System
+		User::Identity::Collection
+		User::Identity::Collection::Systems
+
+	- Everything is now derived from User::Identity::Item
+
+	- User::Identity requires a name (not nickname).
+
 version 0.02
 
 	Improvements:
@@ -9,9 +23,7 @@ version 0.02
 
 	- implemented new classes:
 		Mail::Identity
-		User::Identity::Location
 		User::Identity::Collection
-		User::Identity::Collection::Locations
 		User::Identity::Collection::Item
 		User::Identity::Collection::Emails
 

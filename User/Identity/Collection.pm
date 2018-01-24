@@ -1,4 +1,5 @@
 package User::Identity::Collection;
+use base 'User::Identity::Item';
 
 use strict;
 use warnings;
@@ -16,14 +17,14 @@ User::Identity::Collection - base class for collecting roles of a user
 
  use User::Identity;
  use User::Identity::Collection;
- my $me   = User::Indentity->new(...);
- my $set  = User::Identity::Collection::Email->new(...);
+ my $me    = User::Indentity->new(...);
+ my $set   = User::Identity::Collection::Email->new(...);
  $me->addCollection($set);
 
  # Simpler
  use User::Identity;
- my $me   = User::Indentity->new(...);
- $me->addCollection(type => 'email', ...)
+ my $me    = User::Indentity->new(...);
+ my $set   = $me->addCollection(type => 'email', ...)
 
  my @roles = $me->collection('email');  # list of collected items
 
@@ -46,9 +47,11 @@ Currently imlemented extensions are
 
 =over 4
 
-=item * User::Identity::Collection::Location
+=item * User::Identity::Collection::Locations
 
-=item * User::Identity::Collection::Email
+=item * User::Identity::Collection::Emails
+
+=item * User::Identity::Collection::Systems
 
 =back
 
@@ -61,9 +64,6 @@ Currently imlemented extensions are
 #-----------------------------------------
 
 =c_method new [NAME], OPTIONS
-
-=option  name STRING
-=default name <required>
 
 =option  user OBJECT
 =default user undef
@@ -83,54 +83,30 @@ Immediately add some roles to this collection.  In case of an ARRAY, each
 element of the array is passed separately to addRole(). So, you may end-up
 with an ARRAY of arrays each grouping a set of options to create a role.
 
-=error Unknown option(s): @names.
-
-One or more options where specified which are not recognized.  Usually these
-are typo's or options only available to other objects.
-
-=error Each collection requires a name.
-
-The 'name' option is missing.  This may be caused by an odd length OPTIONS
-list.
-
 =cut
-
-sub new(@)
-{   my $class = shift;
-    return undef unless @_;           # no empty users.
-
-    unshift @_, 'name' if @_ %2;  # odd-length list: starts with nick
-
-    (bless {}, $class)->init( {@_} );
-}
 
 sub init($)
 {   my ($self, $args) = @_;
 
     defined $args->{$_} && ($self->{'UIC_'.$_} = delete $args->{$_})
         foreach qw/
-name
 item_type
 /;
 
+   $self->SUPER::init($args);
    
    if(my $user = delete $args->{user})
    {   $self->user($user);
    }
 
-   if(keys %$args)
-   {   local $" = ', ';
-       croak "ERROR: Unknown option(s): @{ [keys %$args ] }.";
-   }
-
-   unless(defined $self->name)
-   {   require Carp;
-       croak "ERROR: Each collection requires a name.";
-   }
-
    $self->{UIC_roles} = { };
    my $roles = $args->{roles};
-   my @roles = ! defined $roles ? () : ref $roles eq 'ARRAY' ? @$roles : $roles;
+
+   my @roles
+    = ! defined $roles      ? ()
+    : ref $roles eq 'ARRAY' ? @$roles
+    :                         $roles;
+
    $self->addRole($_) foreach @roles;
 
    $self;
@@ -174,25 +150,13 @@ will be shown as list of roles.
 
 =cut
 
-use overload '@{}' => sub { [ values %{$_[0]->{UIC_roles}} ] };
+use overload '@{}' => sub { [ shift->roles ] };
 
 #-----------------------------------------
 
 =head2 Attributes
 
 =cut
-
-#-----------------------------------------
-
-=method name
-
-Reports the logical name for this location.  This is the specified name or, if
-that was not specified, the name of the organization.  This will always return
-a valid string.
-
-=cut
-
-sub name() { shift->{UIC_name} }
 
 #-----------------------------------------
 
@@ -209,16 +173,18 @@ sub roles() { values %{shift->{UIC_roles}} }
 =method addRole ROLE| ( [NAME],OPTIONS ) | ARRAY-OF-OPTIONS
 
 Adds a new role to this collection.  ROLE is an object of the right type
-(depends on the extension of this module) or a list of OPTIONS which are
-used to create such role.  The options can also be passed as reference to
-an array.  The added role is returned.
+(depends on the extension of this module which type that is) or a list
+of OPTIONS which are used to create such role.  The options can also be
+passed as reference to an array.  The added role is returned.
 
 =examples
 
  my $uicl = User::Identity::Collection::Locations->new;
+
  my $uil  = User::Identity::Location->new(home => ...);
  $uicl->addRole($uil);
- $uicl->addRole(home => address => 'street 32');
+
+ $uicl->addRole( home => address => 'street 32' );
  $uicl->addRole( [home => address => 'street 32'] );
 
 Easier
@@ -293,31 +259,42 @@ sub user(;$)
 
 #-----------------------------------------
 
-=method find NAME|CODE
+=method find NAME|CODE|undef
 
-Find the object with the specified NAME in this collection.  If a code
-reference is specified, all collected roles are scanned one after the
-other (in unknow order).  For each role,
+Find the object with the specified NAME in this collection.  With C<undef>,
+a randomly selected role is returned.
 
-    CODE->($object, $collection)
+When a code reference is specified, all collected roles are scanned one
+after the other (in unknown order).  For each role,
+
+ CODE->($object, $collection)
 
 is called.  When the CODE returns true, the role is selected.  In list context,
 all selected roles are returned.  In scalar context, the first match is
 returned and the scan is aborted immediately.
 
+=examples
+
+ my $emails = $ui->collection('emails');
+ $emails->find('work');
+
+ sub find_work($$) {
+    my ($mail, $emails) = @_;
+    $mail->location->name eq 'work';
+ }
+ my @at_work = $emails->find(\&find_work);
+ my @at_work = $ui->find(location => \&find_work);
+ my $any     = $ui->find(location => undef );
+
 =cut
 
 sub find($)
-{   my $self = shift;
+{   my ($self, $select) = @_;
 
-    return $self->{UIC_roles}{ (shift) }
-        unless ref $_[0];
-
-    my $code = shift;
-
-    wantarray
-    ? grep  { $code->($_, $self) } $self->roles
-    : first { $code->($_, $self) } $self->roles;
+      !defined $select ? ($self->roles)[0]
+    : !ref $select     ? $self->{UIC_roles}{$select}
+    : wantarray        ? grep ({ $select->($_, $self) } $self->roles)
+    :                    first { $select->($_, $self) } $self->roles;
 }
 
 #-----------------------------------------

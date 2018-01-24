@@ -4,9 +4,12 @@ Mail/Identity.pm
 Mail/Makefile.PL
 User/Identity.pm
 User/Identity/Location.pm
+User/Identity/System.pm
+User/Identity/Item.pm
 User/Identity/Collection.pm
 User/Identity/Collection/Locations.pm
 User/Identity/Collection/Emails.pm
+User/Identity/Collection/Systems.pm
 User/Identity/Collection/Item.pm
 User/Makefile.PL
 MANIFEST

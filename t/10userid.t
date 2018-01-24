@@ -21,10 +21,10 @@ ok(! defined $a,                             "No empty users");
 my $b = $ui->new('mark');
 ok(defined $b,                               "Create b");
 isa_ok($b, $ui);
-is($b->nickname, 'mark',                     "Check b nick");
+is($b->name, 'mark',                         "Check b nick");
 is($b->fullName, 'Mark',                     "Check b fullname");
 
-my $c = $ui->new(nickname => 'mark');
+my $c = $ui->new(name => 'mark');
 ok(defined $c,                               "Create c");
 isa_ok($c, $ui);
 is($c->nickname, 'mark',                     "Check c nick");
@@ -33,7 +33,7 @@ ok(!defined $c->gender);
 ok(!$c->isMale);
 ok(!$c->isFemale);
 
-my $d = $ui->new(firstname => 'Mark', surname => 'Overmeer',
+my $d = $ui->new('mark', firstname => 'Mark', surname => 'Overmeer',
    gender => 'male');
 ok(defined $d,                               "Create d");
 is($d->gender, 'male',                       "Check d gender");
