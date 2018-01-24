@@ -1,3 +1,7 @@
+# This code is part of distribution User-Identity.  Meta-POD processed with
+# OODoc into POD and HTML manual-pages.  See README.md
+# Copyright Mark Overmeer.  Licensed under the same terms as Perl itself.
+
 package User::Identity::Collection::Locations;
 use base 'User::Identity::Collection';
 
@@ -45,4 +49,3 @@ sub init($)
 sub type() { 'whereabouts' }
 
 1;
-

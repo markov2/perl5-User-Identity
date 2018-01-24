@@ -1,13 +1,18 @@
+# This code is part of distribution Math-Polygon.  Meta-POD processed with
+# OODoc into POD and HTML manual-pages.  See README.md
+# Copyright Mark Overmeer.  Licensed under the same terms as Perl itself.
+
 package User::Identity;
 use base 'User::Identity::Item';
 
 use strict;
 use warnings;
+
 use Carp;
 
 =chapter NAME
 
-User::Identity - maintains info about a physical person
+User::Identity - maintain info about a physical person
 
 =chapter SYNOPSIS
 
@@ -22,7 +27,7 @@ User::Identity - maintains info about a physical person
 
 =chapter DESCRIPTION
 
-The C<User::Identity> object is created to maintain a set of informational
+The C<User-Identity> distribution is created to maintain a set of informational
 objects which are related to one user.  The C<User::Identity> module tries to
 be smart providing defaults, conversions and often required combinations.
 

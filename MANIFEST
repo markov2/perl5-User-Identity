@@ -1,6 +1,7 @@
-Changes
+ChangeLog
 MANIFEST
 Makefile.PL
+README.md
 lib/Mail/Identity.pm
 lib/User/Identity.pm
 lib/User/Identity/Archive.pm
