@@ -4,7 +4,7 @@
 All changes are made by Mark Overmeer <markov@cpan.org> unless
 explicitly stated differently.
 
-version 1.00:
+version 1.00: Wed 14 Oct 19:14:36 CEST 2020
 
 	Fixes:
 	- fix metadata [Mohammad S Anwar]
