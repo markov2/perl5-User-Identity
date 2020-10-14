@@ -240,8 +240,17 @@ sub address()
 {   my $self = shift;
     return $self->{MI_address} if defined $self->{MI_address};
 
-    return $self->username .'@'. $self->domain
-        if $self->{MI_username} || $self->{MI_domain};
+    if(my $username = $self->username)
+    {   if(my $domain = $self->domain)
+        {   if($username =~ /[^a-zA-Z0-9!#\$%&'*+\-\/=?^_`{|}~.]/)
+            {   # When the local part does contain a different character
+                # than an atext or dot, make it quoted-string
+                $username =~ s/"/\\"/g;
+                $username = qq{"$username"};
+            }
+            return "$username\@$domain";
+        }
+    }
 
     my $name = $self->name;
     return $name if index($name, '@') >= 0;
