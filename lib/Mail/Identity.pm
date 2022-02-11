@@ -141,11 +141,8 @@ sub from($)
     return $other if $other->isa(__PACKAGE__);
 
     if($other->isa('Mail::Address'))
-    {   return $class->new
-          ( phrase  => $other->phrase
-          , address => $other->address
-          , comment => $other->comment
-          , @_);
+    {   # Mail::Address is far to lazy
+        return $class->parse($other->format);
     }
 
     if($other->isa('User::Identity'))
