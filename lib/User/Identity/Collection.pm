@@ -10,7 +10,9 @@ use warnings;
 
 use User::Identity;
 use Carp;
-use List::Util   qw/first/;
+
+use List::Util    qw/first/;
+use Hash::Ordered ();
 
 =chapter NAME
 
@@ -115,7 +117,7 @@ sub init($)
     defined($self->SUPER::init($args)) or return;
     
     $self->{UIC_itype} = delete $args->{item_type} or die;
-    $self->{UIC_roles} = { };
+    tie %{$self->{UIC_roles}}, 'Hash::Ordered';
     my $roles = $args->{roles};
  
     my @roles
