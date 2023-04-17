@@ -2,7 +2,7 @@ use 5.010;
 
 use ExtUtils::MakeMaker;
 
-my $version = '1.02';
+my $version = '1.03';
 
 #
 # The following is needed, because User::Identity does gracefully handle
