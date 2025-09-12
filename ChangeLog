@@ -11,6 +11,7 @@ version 1.03:
 
 	Improvements:
 	- convert to OODoc 3.04
+	- add .gitignore
 
 version 1.02: Mon 17 Apr 10:40:50 CEST 2023
 
