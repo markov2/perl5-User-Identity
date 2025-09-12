@@ -9,6 +9,9 @@ version 1.03:
 	Changes:
 	- require Perl 5.16 (2012)
 
+	Improvements:
+	- convert to OODoc 3.04
+
 version 1.02: Mon 17 Apr 10:40:50 CEST 2023
 
 	Changes:

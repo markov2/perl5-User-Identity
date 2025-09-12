@@ -1,6 +1,7 @@
-# This code is part of distribution User-Identity.  Meta-POD processed with
-# OODoc into POD and HTML manual-pages.  See README.md
-# Copyright Mark Overmeer.  Licensed under the same terms as Perl itself.
+#oodist: *** DO NOT USE THIS VERSION FOR PRODUCTION ***
+#oodist: This file contains OODoc-style documentation which will get stripped
+#oodist: during its release in the distribution.  You can use this file for
+#oodist: testing, however the code of this development version may be broken!
 
 package Mail::Identity;
 use base 'User::Identity::Item';
@@ -11,29 +12,28 @@ use warnings;
 use User::Identity;
 use Scalar::Util 'weaken';
 
+#--------------------
 =chapter NAME
 
 Mail::Identity - an e-mail role
 
 =chapter SYNOPSIS
 
- use M<User::Identity>;
- use Mail::Identity;
- my $me   = User::Identity->new(...);
- my $addr = Mail::Identity->new(address => 'x@y');
- $me->add(email => $addr);
+  use User::Identity;
+  use Mail::Identity;
+  my $me   = User::Identity->new(...);
+  my $addr = Mail::Identity->new(address => 'x@y');
+  $me->add(email => $addr);
 
- # Simpler
+  # Simpler
+  use User::Identity;
+  my $me   = User::Identity->new(...);
+  my $addr = $me->add(email => 'x@y');
+  my $addr = $me->add(email => 'home', address => 'x@y');
 
- use User::Identity;
- my $me   = User::Identity->new(...);
- my $addr = $me->add(email => 'x@y');
- my $addr = $me->add( email => 'home'
-                    , address => 'x@y');
-
- # Conversion
- my $ma   = Mail::Address->new(...);
- my $mi   = Mail::Identity->coerce($ma);
+  # Conversion
+  my $ma   = Mail::Address->new(...);
+  my $mi   = Mail::Identity->coerce($ma);
 
 =chapter DESCRIPTION
 
@@ -45,13 +45,12 @@ addresses.
 An C<Mail::Identity> object combines an e-mail address, user description
 ("phrase"), a signature, pgp-key, and so on.  All fields are optional,
 and some fields are smart.  One such set of data represents one role.
-C<Mail::Identity> is therefore the smart cousine of the M<Mail::Address>
+C<Mail::Identity> is therefore the smart cousine of the Mail::Address
 object.
 
 =chapter METHODS
 
 =section Constructors
-
 =cut
 
 sub type() { "email" }
@@ -78,16 +77,15 @@ when both do not exist, the name is taken.
 =option  language STRING
 =default language <from user>
 
-=option  location NAME|OBJECT
+=option  location $name|OBJECT
 =default location <random user's location>
 
 The user's location which relates to this mail identity.  This can be
-specified as location name (which will be looked-up when needed), or
-as M<User::Identity::Location> object.
+specified as location $name (which will be looked-up when needed), or
+as User::Identity::Location object.
 
 =option  organization STRING
 =default organization <location's organization>
-
 Usually defined for e-mail addresses which are used by a company or
 other organization, but less common for personal addresses.  This
 value will be used to fill the C<Organization> header field of messages.
@@ -107,53 +105,47 @@ value will be used to fill the C<Organization> header field of messages.
 =cut
 
 sub init($)
-{   my ($self, $args) = @_;
+{	my ($self, $args) = @_;
+	$args->{name} ||= '-x-';
 
-    $args->{name} ||= '-x-';
+	$self->SUPER::init($args);
 
-    $self->SUPER::init($args);
+	exists $args->{$_} && ($self->{'MI_'.$_} = delete $args->{$_})
+		for qw/address charset comment domain language location organization pgp_key phrase signature username/;
 
-    exists $args->{$_} && ($self->{'MI_'.$_} = delete $args->{$_})
-        foreach qw/address charset comment domain language
-                   location organization pgp_key phrase signature
-                   username/;
+	$self->{UII_name} = $self->phrase || $self->address
+		if $self->{UII_name} eq '-x-';
 
-   $self->{UII_name} = $self->phrase || $self->address
-      if $self->{UII_name} eq '-x-';
-
-   $self;
+	$self;
 }
 
+#--------------------
 =section Constructors
 
 =method from $object
-
 Convert an $object into a C<Mail::Identity>.  On the moment, you can
-specify M<Mail::Address> and M<User::Identity> objects.  In the
+specify Mail::Address and User::Identity objects.  In the
 former case, a new C<Mail::Identity> is created containing the same
 information.  In the latter, the first address of the user is picked
 and returned.
-
 =cut
 
 sub from($)
-{   my ($class, $other) = (shift, shift);
-    return $other if $other->isa(__PACKAGE__);
+{	my ($class, $other) = (shift, shift);
+	return $other if $other->isa(__PACKAGE__);
 
-    if($other->isa('Mail::Address'))
-    {   # Mail::Address is far to lazy
-        return $class->parse($other->format);
-    }
+	$other->isa('Mail::Address')
+		and return $class->parse($other->format);  # Mail::Address is far to lazy
 
-    if($other->isa('User::Identity'))
-    {   my $emails = $other->collection('emails') or next;
-        my @roles  = $emails->roles or return ();
-        return $roles[0];      # first Mail::Identity
-    }
+	$other->isa('User::Identity')
+		or return undef;
 
-    undef;
+	my $emails = $other->collection('emails') or next;
+	my @roles  = $emails->roles or return ();
+	$roles[0];      # first Mail::Identity
 }
 
+#--------------------
 =section Attributes
 
 =method comment [STRING]
@@ -169,135 +161,126 @@ when needed.  You do not need to worry.
 =cut
 
 sub comment($)
-{   my $self = shift;
-    return $self->{MI_comment} = shift if @_;
-    return $self->{MI_comment} if defined $self->{MI_comment};
+{	my $self = shift;
+	return $self->{MI_comment} = shift if @_;
+	return $self->{MI_comment} if defined $self->{MI_comment};
 
-    my $user = $self->user     or return undef;
-    my $full = $user->fullName or return undef;
-    $self->phrase eq $full ? undef : $full;
+	my $user = $self->user     or return undef;
+	my $full = $user->fullName or return undef;
+	$self->phrase eq $full ? undef : $full;
 }
 
-=method charset 
+=method charset
 Returns the character set used in comment and phrase.  When set to
-C<undef>, the strings (are already encoded to) contain only ASCII
+undef, the strings (are already encoded to) contain only ASCII
 characters.  This defaults to the value of the user's charset, if a user
 is defined.
-
 =cut
 
 sub charset()
-{   my $self = shift;
-    return $self->{MI_charset} if defined $self->{MI_charset};
+{	my $self = shift;
+	return $self->{MI_charset} if defined $self->{MI_charset};
 
-    my $user = $self->user     or return undef;
-    $user->charset;
+	my $user = $self->user     or return undef;
+	$user->charset;
 }
 
-=method language 
+=method language
 Returns the language which is used for the description fields of this
 e-mail address, which defaults to the user's language.
-
 =cut
 
 sub language()
-{   my $self = shift;
-   
-    return $self->{MI_language} if defined $self->{MI_language};
+{	my $self = shift;
+	return $self->{MI_language} if defined $self->{MI_language};
 
-    my $user = $self->user     or return undef;
-    $user->language;
+	my $user = $self->user     or return undef;
+	$user->language;
 }
 
-=method domain 
+=method domain
 The domain is the part of the e-mail address after the C<@>-sign.
 When this is not defined, it can be deducted from the email address
 (see M<address()>).  If nothing is known, C<localhost> is returned.
-
 =cut
 
 sub domain()
-{   my $self = shift;
-    return $self->{MI_domain}
-        if defined $self->{MI_domain};
+{	my $self = shift;
+	return $self->{MI_domain} if defined $self->{MI_domain};
 
-    my $address = $self->{MI_address} or return 'localhost';
-    $address =~ s/.*?\@// ? $address : undef;
+	my $address = $self->{MI_address} or return 'localhost';
+	$address =~ s/.*?\@// ? $address : undef;
 }
 
-=method address 
+=method address
 Returns the e-mail address for this role.  If none was specified, it will
 be constructed from the username and domain.  If those are not present
 as well, then the M<name()> is used when it contains a C<@>, else the
 user's nickname is taken.
-
 =cut
 
 sub address()
-{   my $self = shift;
-    return $self->{MI_address} if defined $self->{MI_address};
+{	my $self = shift;
+	return $self->{MI_address} if defined $self->{MI_address};
 
-    if(my $username = $self->username)
-    {   if(my $domain = $self->domain)
-        {   if($username =~ /[^a-zA-Z0-9!#\$%&'*+\-\/=?^_`{|}~.]/)
-            {   # When the local part does contain a different character
-                # than an atext or dot, make it quoted-string
-                $username =~ s/"/\\"/g;
-                $username = qq{"$username"};
-            }
-            return "$username\@$domain";
-        }
-    }
+	if(my $username = $self->username)
+	{	if(my $domain = $self->domain)
+		{	if($username =~ /[^a-zA-Z0-9!#\$%&'*+\-\/=?^_`{|}~.]/)
+			{	# When the local part does contain a different character
+				# than an atext or dot, make it quoted-string
+				$username =~ s/"/\\"/g;
+				$username = qq{"$username"};
+			}
+			return "$username\@$domain";
+		}
+	}
 
-    my $name = $self->name;
-    return $name if index($name, '@') >= 0;
+	my $name = $self->name;
+	return $name if index($name, '@') >= 0;
 
-    my $user = $self->user;
-    defined $user ? $user->nickname : $name;
+	my $user = $self->user;
+	defined $user ? $user->nickname : $name;
 }
 
-=method location 
+=method location
 Returns the object which describes to which location this mail address relates.
 The location may be used to find the name of the organization involved, or
 to create a signature.  If no location is specified, but a user is defined
 which has locations, one of those is randomly chosen.
-
 =cut
 
 sub location()
-{   my $self      = shift;
-    my $location  = $self->{MI_location};
+{	my $self      = shift;
+	my $location  = $self->{MI_location};
 
-    if(! defined $location)
-    {   my $user  = $self->user or return;
-        my @locs  = $user->collection('locations');
-        $location =  @locs ? $locs[0] : undef;
-    }
-    elsif(! ref $location)
-    {   my $user  = $self->user or return;
-        $location = $user->find(location => $location);
-    }
+	if(! defined $location)
+	{	my $user  = $self->user or return;
+		my @locs  = $user->collection('locations');
+		$location =  @locs ? $locs[0] : undef;
+	}
+	elsif(! ref $location)
+	{	my $user  = $self->user or return;
+		$location = $user->find(location => $location);
+	}
 
-    $location;
+	$location;
 }
 
-=method organization 
+=method organization
 Returns the organization which relates to this e-mail identity.  If not
 explicitly specified, it is tried to be found via the location.
-
 =cut
 
 sub organization()
-{   my $self = shift;
+{	my $self = shift;
+	return $self->{MI_organization} if defined $self->{MI_organization};
 
-    return $self->{MI_organization} if defined $self->{MI_organization};
-
-    my $location = $self->location or return;
-    $location->organization;
+	my $location = $self->location or return;
+	$location->organization;
 }
 
 #pgp_key
-=method phrase 
+=method phrase
 The phrase is used in an e-mail address to explain who is sending the
 message.  This usually is the fullname (the user's fullname is used by
 default), description of your function (Webmaster), or any other text.
@@ -305,39 +288,35 @@ default), description of your function (Webmaster), or any other text.
 When an email string is produced, the phase will be quoted if needed.
 Quotes which are within the string will automatically be escaped, so
 you do no need to worry: input cannot break the outcome!
-
 =cut
 
 sub phrase()
-{  my $self = shift;
-    return $self->{MI_phrase} if defined $self->{MI_phrase};
-    my $user = $self->user     or return undef;
-    my $full = $user->fullName or return undef;
-    $full;
+{	my $self = shift;
+	return $self->{MI_phrase} if defined $self->{MI_phrase};
+	my $user = $self->user     or return undef;
+	my $full = $user->fullName or return undef;
+	$full;
 }
 
 #signature
-
-=method username 
+=method username
 Returns the username of this e-mail address.  If none is specified, first
 it is tried to extract it from the specified e-mail address.  If there is
 also no username in the e-mail address, the user identity's nickname is
 taken.
-
 =cut
 
 sub username()
-{   my $self = shift;
-    return $self->{MI_username} if defined $self->{MI_username};
- 
-    if(my $address = $self->{MI_address})
-    {   $address =~ s/\@.*$//;   # strip domain part if present
-        return $address;
-    }
+{	my $self = shift;
+	return $self->{MI_username} if defined $self->{MI_username};
 
-    my $user = $self->user or return;
-    $user->nickname;
+	if(my $address = $self->{MI_address})
+	{	$address =~ s/\@.*$//;   # strip domain part if present
+		return $address;
+	}
+
+	my $user = $self->user or return;
+	$user->nickname;
 }
 
 1;
-

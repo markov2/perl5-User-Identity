@@ -1,6 +1,7 @@
-# This code is part of distribution User-Identity.  Meta-POD processed with
-# OODoc into POD and HTML manual-pages.  See README.md
-# Copyright Mark Overmeer.  Licensed under the same terms as Perl itself.
+#oodist: *** DO NOT USE THIS VERSION FOR PRODUCTION ***
+#oodist: This file contains OODoc-style documentation which will get stripped
+#oodist: during its release in the distribution.  You can use this file for
+#oodist: testing, however the code of this development version may be broken!
 
 package User::Identity::Collection;
 use base 'User::Identity::Item';
@@ -8,40 +9,43 @@ use base 'User::Identity::Item';
 use strict;
 use warnings;
 
-use User::Identity;
+use User::Identity ();
+
+use Hash::Ordered  ();
+
 use Carp;
+use List::Util     qw/first/;
 
-use List::Util    qw/first/;
-use Hash::Ordered ();
 
+#--------------------
 =chapter NAME
 
 User::Identity::Collection - base class for collecting roles of a user
 
 =chapter SYNOPSIS
 
- use M<User::Identity>;
- use User::Identity::Collection;
- my $me    = User::Identity->new(...);
- my $set   = M<User::Identity::Collection::Emails>->new(...);
- $me->addCollection($set);
+  use User::Identity;
+  use User::Identity::Collection;
+  my $me    = User::Identity->new(...);
+  my $set   = User::Identity::Collection::Emails->new(...);
+  $me->addCollection($set);
 
- # Simpler
- use User::Identity;
- my $me    = User::Identity->new(...);
- my $set   = $me->addCollection(type => 'email', ...)
- my $set   = $me->addCollection('email', ...)
+  # Simpler
+  use User::Identity;
+  my $me    = User::Identity->new(...);
+  my $set   = $me->addCollection(type => 'email', ...)
+  my $set   = $me->addCollection('email', ...)
 
- my @roles = $me->collection('email');  # list of collected items
+  my @roles = $me->collection('email');  # list of collected items
 
- my $coll  = $me->collection('email');  # a User::Identity::Collection
- my @roles = $coll->roles;
- my @roles = @$coll;                    # same, by overloading
+  my $coll  = $me->collection('email');  # a User::Identity::Collection
+  my @roles = $coll->roles;
+  my @roles = @$coll;                    # same, by overloading
 
- my $role  = $me->collection('email')->find($coderef);
- my $role  = $me->collection('location')->find('work');
- my $role  = $me->find(location => 'work');
- 
+  my $role  = $me->collection('email')->find($coderef);
+  my $role  = $me->collection('location')->find('work');
+  my $role  = $me->find(location => 'work');
+
 =chapter DESCRIPTION
 The C<User::Identity::Collection> object maintains a set user related
 objects.  It helps selecting these objects, which is partially common to
@@ -60,35 +64,34 @@ L<groups of systems|User::Identity::Collection::Systems>
 
 =chapter OVERLOADED
 
-=overload stringification 
+=overload "" stringification
 Returns the name of the collection and a sorted list of defined items.
 
 =examples
- print "$collection\n";  #   location: home, work
+  print "$collection\n";  #   location: home, work
 
 =cut
 
 use overload '""' => sub {
-   my $self = shift;
-   $self->name . ": " . join(", ", sort map {$_->name} $self->roles);
+	my $self = shift;
+	$self->name . ": " . join(", ", sort map $_->name, $self->roles);
 };
 
-=overload  @{}
+=overload @{} array dereference
 When the reference to a collection object is used as array-reference, it
 will be shown as list of roles.
 
 =examples
 
- my $locations = $ui->collection('location');
- foreach my $loc (@$location) ...
- print $location->[0];
+  my $locations = $ui->collection('location');
+  foreach my $loc (@$location) ...
+  print $location->[0];
 
 =cut
 
-use overload '@{}' => sub { [ shift->roles ] };
+use overload '@{}' => sub { [ $_[0]->roles ] };
 
-#-----------------------------------------
-
+#--------------------
 =chapter METHODS
 
 =section Constructors
@@ -97,13 +100,13 @@ use overload '@{}' => sub { [ shift->roles ] };
 sub type { "people" }
 
 =c_method new [$name], %options
+
 =requires item_type CLASS
 The CLASS which is used to store the information for each of the maintained
 objects within this collection.
 
 =option   roles    ROLE|ARRAY
 =default  roles    undef
-
 Immediately add some roles to this collection.  In case of an ARRAY,
 each element of the array is passed separately to M<addRole()>. So,
 you may end-up with an ARRAY of arrays each grouping a set of options
@@ -112,65 +115,60 @@ to create a role.
 =cut
 
 sub init($)
-{   my ($self, $args) = @_;
+{	my ($self, $args) = @_;
+	defined($self->SUPER::init($args)) or return;
 
-    defined($self->SUPER::init($args)) or return;
-    
-    $self->{UIC_itype} = delete $args->{item_type} or die;
-    tie %{$self->{UIC_roles}}, 'Hash::Ordered';
-    my $roles = $args->{roles};
- 
-    my @roles
-     = ! defined $roles      ? ()
-     : ref $roles eq 'ARRAY' ? @$roles
-     :                         $roles;
- 
-    $self->addRole($_) foreach @roles;
-    $self;
+	$self->{UIC_itype} = delete $args->{item_type} or die;
+	tie %{$self->{UIC_roles}}, 'Hash::Ordered';
+	my $roles = $args->{roles};
+
+	my @roles
+	  = ! defined $roles      ? ()
+	  : ref $roles eq 'ARRAY' ? @$roles
+	  :   $roles;
+
+	$self->addRole($_) for @roles;
+	$self;
 }
 
-#-----------------------------------------
-
+#--------------------
 =section Attributes
 
-=method roles 
+=method roles
 Returns all defined roles within this collection.  Be warned: the rules
 are returned in random (hash) order.
 =cut
 
-sub roles() { values %{shift->{UIC_roles}} }
+sub roles() { values %{ $_[0]->{UIC_roles}} }
 
-=method itemType 
+=method itemType
 Returns the type of the items collected.
 =cut
 
-sub itemType { shift->{UIC_itype} }
+sub itemType { $_[0]->{UIC_itype} }
 
-#-----------------------------------------
-
+#--------------------
 =section Maintaining roles
 
-=method addRole $role| <[$name],%options> | ARRAY
-
+=method addRole $role|([$name], %options)
 Adds a new role to this collection.  $role is an object of the right type
 (depends on the extension of this module which type that is) or a list
 of %options which are used to create such role.  The options can also be
 passed as reference to an ARRAY.  The added role is returned.
 
 =examples
- my $uicl = User::Identity::Collection::Locations->new;
+  my $uicl = User::Identity::Collection::Locations->new;
 
- my $uil  = User::Identity::Location->new(home => ...);
- $uicl->addRole($uil);
-
- $uicl->addRole( home => address => 'street 32' );
- $uicl->addRole( [home => address => 'street 32'] );
+  my $uil  = User::Identity::Location->new(home => ...);
+  $uicl->addRole($uil);
+  $uicl->addRole(  home => address => 'street 32' );
+  $uicl->addRole( [home => address => 'street 32'] );
 
 Easier
 
- $ui      = User::Identity;
- $ui->add(location => 'home', address => 'street 32' );
- $ui->add(location => [ 'home', address => 'street 32' ] );
+  $ui      = User::Identity;
+  $ui->add(location => 'home', address => 'street 32' );
+  $ui->add(location => [ 'home', address => 'street 32' ] );
 
 =error Wrong type of role for $collection: requires a $expect but got a $type
 Each $collection groups sets of roles of one specific type ($expect).  You
@@ -179,29 +177,27 @@ cannot add objects of a different $type.
 =error Cannot create a $type to add this to my collection.
 Some options are specified to create a $type object, which is native to
 this collection.  However, for some reason this failed.
-
 =cut
 
 sub addRole(@)
-{   my $self = shift;
-    my $maintains = $self->itemType;
+{	my $self = shift;
+	my $maintains = $self->itemType;
 
-    my $role;
-    if(ref $_[0] && ref $_[0] ne 'ARRAY')
-    {   $role = shift;
-        croak "ERROR: Wrong type of role for ".ref($self)
-            . ": requires a $maintains but got a ". ref($role)
-           unless $role->isa($maintains);
-    }
-    else
-    {   $role = $maintains->new(ref $_[0] ? @{$_[0]} :  @_);
-        croak "ERROR: Cannot create a $maintains to add this to my collection."
-            unless defined $role;
-    }
+	my $role;
+	if(ref $_[0] && ref $_[0] ne 'ARRAY')
+	{	$role = shift;
+		$role->isa($maintains)
+			or croak "ERROR: Wrong type of role for ".ref($self) . ": requires a $maintains but got a ". ref($role);
+	}
+	else
+	{	$role = $maintains->new(ref $_[0] ? @{$_[0]} :  @_);
+		defined $role
+			or croak "ERROR: Cannot create a $maintains to add this to my collection.";
+	}
 
-    $role->parent($self);
-    $self->{UIC_roles}{$role->name} = $role;
-    $role;
+	$role->parent($self);
+	$self->{UIC_roles}{$role->name} = $role;
+	$role;
 }
 
 =method removeRole $role|$name
@@ -209,11 +205,11 @@ The deleted role is returned (if it existed).
 =cut
 
 sub removeRole($)
-{   my ($self, $which) = @_;
-    my $name = ref $which ? $which->name : $which;
-    my $role = delete $self->{UIC_roles}{$name} or return ();
-    $role->parent(undef);
-    $role;
+{	my ($self, $which) = @_;
+	my $name = ref $which ? $which->name : $which;
+	my $role = delete $self->{UIC_roles}{$name} or return ();
+	$role->parent(undef);
+	$role;
 }
 
 =method renameRole <$role|$oldname>, $newname
@@ -224,42 +220,41 @@ Give the role a different name, and move it in the collection.
 =cut
 
 sub renameRole($$$)
-{   my ($self, $which, $newname) = @_;
-    my $name = ref $which ? $which->name : $which;
+{	my ($self, $which, $newname) = @_;
+	my $name = ref $which ? $which->name : $which;
 
-    if(exists $self->{UIC_roles}{$newname})
-    {   $self->log(ERROR=>"Cannot rename $name into $newname: already exists");
-        return ();
-    }
+	if(exists $self->{UIC_roles}{$newname})
+	{	$self->log(ERROR => "cannot rename $name into $newname: already exists");
+		return ();
+	}
 
-    my $role = delete $self->{UIC_roles}{$name};
-    unless(defined $role)
-    {   $self->log(ERROR => "Cannot rename $name into $newname: doesn't exist");
-        return ();
-    }
+	my $role = delete $self->{UIC_roles}{$name};
+	unless(defined $role)
+	{	$self->log(ERROR => "cannot rename $name into $newname: doesn't exist");
+		return ();
+	}
 
-    $role->name($newname);   # may imply change other attributes.
-    $self->{UIC_roles}{$newname} = $role;
+	$role->name($newname);   # may imply change other attributes.
+	$self->{UIC_roles}{$newname} = $role;
 }
 
-=method sorted 
+=method sorted
 Returns the roles sorted by name, alphabetically and case-sensitive.
 =cut
 
 sub sorted() { sort {$a->name cmp $b->name} shift->roles}
 
-#-----------------------------------------
-
+#--------------------
 =section Searching
 
 =method find $name|CODE|undef
-Find the object with the specified $name in this collection.  With C<undef>,
+Find the object with the specified $name in this collection.  With undef,
 a randomly selected role is returned.
 
 When a code reference is specified, all collected roles are scanned one
 after the other (in unknown order).  For each role,
 
- CODE->($object, $collection)
+  CODE->($object, $collection)
 
 is called.  When the CODE returns true, the role is selected.  In list context,
 all selected roles are returned.  In scalar context, the first match is
@@ -267,27 +262,26 @@ returned and the scan is aborted immediately.
 
 =examples
 
- my $emails = $ui->collection('emails');
- $emails->find('work');
+  my $emails = $ui->collection('emails');
+  $emails->find('work');
 
- sub find_work($$) {
-    my ($mail, $emails) = @_;
-    $mail->location->name eq 'work';
- }
- my @at_work = $emails->find(\&find_work);
- my @at_work = $ui->find(location => \&find_work);
- my $any     = $ui->find(location => undef );
+  sub find_work($$) {
+     my ($mail, $emails) = @_;
+     $mail->location->name eq 'work';
+  }
+  my @at_work = $emails->find(\&find_work);
+  my @at_work = $ui->find(location => \&find_work);
+  my $any     = $ui->find(location => undef );
 
 =cut
 
 sub find($)
-{   my ($self, $select) = @_;
+{	my ($self, $select) = @_;
 
-      !defined $select ? ($self->roles)[0]
-    : !ref $select     ? $self->{UIC_roles}{$select}
-    : wantarray        ? grep ({ $select->($_, $self) } $self->roles)
-    :                    first { $select->($_, $self) } $self->roles;
+	    !defined $select ? ($self->roles)[0]
+	  : !ref $select     ? $self->{UIC_roles}{$select}
+	  : wantarray        ? (grep $select->($_, $self), $self->roles)
+	  :    first { $select->($_, $self) } $self->roles;
 }
 
 1;
-

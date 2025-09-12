@@ -1,6 +1,7 @@
-# This code is part of distribution User-Identity.  Meta-POD processed with
-# OODoc into POD and HTML manual-pages.  See README.md
-# Copyright Mark Overmeer.  Licensed under the same terms as Perl itself.
+#oodist: *** DO NOT USE THIS VERSION FOR PRODUCTION ***
+#oodist: This file contains OODoc-style documentation which will get stripped
+#oodist: during its release in the distribution.  You can use this file for
+#oodist: testing, however the code of this development version may be broken!
 
 package User::Identity::Archive;
 use base 'User::Identity::Item';
@@ -8,16 +9,17 @@ use base 'User::Identity::Item';
 use strict;
 use warnings;
 
+#--------------------
 =chapter NAME
 
 User::Identity::Archive - base class for archiving user information
 
 =chapter SYNOPSIS
 
- use User::Identity::Archive::Plain;
- my $friends = M<User::Identity::Archive::Plain>->new('friends');
- $friends->from(\*FH);
- $friends->from('.friends');
+  use User::Identity::Archive::Plain;
+  my $friends = User::Identity::Archive::Plain->new('friends');
+  $friends->from(\*FH);
+  $friends->from('.friends');
 
 =chapter DESCRIPTION
 
@@ -28,31 +30,27 @@ which can be stored.
 =chapter OVERLOADED
 
 =chapter METHODS
-
 =cut
 
 sub type { "archive" }
 
 =c_method new [$name], %options
-
 =option  from FILEHANDLE|FILENAME
-=default from C<undef>
-
+=default from undef
 =cut
 
 sub init($)
-{   my ($self, $args) = @_;
-    $self->SUPER::init($args) or return;
+{	my ($self, $args) = @_;
+	$self->SUPER::init($args) or return;
 
-    if(my $from = delete $args->{from})
-    {   $self->from($from) or return;
-    }
+	if(my $from = delete $args->{from})
+	{	$self->from($from) or return;
+	}
 
-    $self;
+	$self;
 }
 
-#-----------------------------------------
-
+#--------------------
 =section Access to the archive
 
 =method from $source, %options
@@ -65,11 +63,10 @@ C<UNIVERSAL::can()> beforehand.
 
 =example
 
- use User::Identity::Archive::Some;
- my $a = User::Identity::Archive::Some->new('xyz');
- $a->from(\*STDIN) if $a->can('from');
+  use User::Identity::Archive::Some;
+  my $a = User::Identity::Archive::Some->new('xyz');
+  $a->from(\*STDIN) if $a->can('from');
 
 =cut
 
 1;
-
