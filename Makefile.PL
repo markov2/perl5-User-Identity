@@ -24,6 +24,7 @@ my %oodist   = (
 	parser   => {
 		syntax         => 'markov',
 		skip_links     => [
+			'AddressBook',
 		],
 		pmhead         => undef,
 	},
@@ -55,7 +56,8 @@ my %oodist   = (
 my %prereq =
 (   'Hash::Ordered' => 0.014,
 );
-my ($gc, $gc_version) = ( 'Geography::Countries ' => 2009041301);
+
+my ($gc, $gc_version) = ('Geography::Countries' => 2009041301);
 eval "require $gc";
 
 if($@ =~ m/^Can't locate/)
