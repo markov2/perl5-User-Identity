@@ -1,4 +1,6 @@
-use 5.010;
+#!/usr/bin/env perl
+
+use 5.016;
 
 use ExtUtils::MakeMaker;
 
