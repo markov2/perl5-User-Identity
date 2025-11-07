@@ -76,7 +76,6 @@ elsif($gc->VERSION < $gc_version)
 WriteMakefile
 	NAME       => 'User::Identity',
 	VERSION    => $version,
-	PREREQ_PM  => \%prereq,
 	ABSTRACT   => 'Collect information about a user',
 	AUTHOR     => 'Mark Overmeer <markov@cpan.org>',
 	LICENSE    => 'perl_5',
@@ -89,20 +88,26 @@ WriteMakefile
 				url  => "$git.git",
 				web  => $git,
 			},
+			bugtracker => {
+				web  => "$git/issues",
+			},
 			homepage => $homepage,
 			license  => [ 'http//dev.perl.org/licenses/' ],
 		},
 		prereqs => {
+			runtime => {
+				requires => \%prereq,
+			},
 			develop => {
 				requires => {
 					'OODoc' => '3.00',
-				}
+				},
 			},
 			test => {
 				requires => {
 					'Test::More' => 1.00,
 					'Test::Pod'  => 1.00,
-				}
+				},
 			},
 		},
 
