@@ -5,7 +5,7 @@ use 5.016;
 use ExtUtils::MakeMaker;
 
 # Use command 'oodist' to produce your whole software release.
-my $version = '1.04';
+my $version = '3.00';
 my $git      = "https://github.com/markov2/perl5-User-Identity";
 my $publish  = "../public_html/user-identity";
 my $homepage = "http://perl.overmeer.net/CPAN/";
@@ -40,38 +40,21 @@ my %oodist   = (
 		publish        => "$publish/raw",
 	},
 
-	generate => [
-	  {
-		# Add real pod to the releases
+	generate => [ {
 		format         => 'pod3',
 		podtail        => undef,
-	  },
- 	  # You may add HTML formatters here.
- 		  # You may add exporter configurations here.
-	],
+	}, ],
 );
 
 # The following is needed, because User::Identity does gracefully handle
 # a missing Geography::Countries, but is incompatible with older releases.
-my %prereq =
-(   'Hash::Ordered' => 0.014,
+my %prereq = (
+	'Hash::Ordered' => 0.014,
 );
 
-my ($gc, $gc_version) = ('Geography::Countries' => 2009041301);
-eval "require $gc";
-
-if($@ =~ m/^Can't locate/)
-{   # Not installed, but it is optional...
-}
-elsif($@)
-{   # Other error message
-    warn "Found problems compiling $gc:\n$@";
-    $prereq{$gc} = $gc_version;
-}
-elsif($gc->VERSION < $gc_version)
-{   warn "$gc is too old (",$gc->VERSION,"), and needs to be reinstalled\n";
-    $prereq{$gc} = $gc_version;
-}
+my %optional = (
+	'Geography::Countries' => 2009041301,
+);
 
 WriteMakefile
 	NAME       => 'User::Identity',
