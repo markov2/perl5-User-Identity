@@ -46,8 +46,6 @@ my %oodist   = (
 	}, ],
 );
 
-# The following is needed, because User::Identity does gracefully handle
-# a missing Geography::Countries, but is incompatible with older releases.
 my %prereq = (
 	'Hash::Ordered' => 0.014,
 );

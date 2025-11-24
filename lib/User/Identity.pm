@@ -33,6 +33,10 @@ The C<User-Identity> distribution is created to maintain a set of informational
 objects which are related to one user.  The C<User::Identity> module tries to
 be smart providing defaults, conversions and often required combinations.
 
+B<This is a maintenance release for the old interface>.  Read
+F<https://github.com/markov2/perl5-Mail-Box/wiki/> how
+to move towards version 4.
+
 The identities are not implementing any kind of storage, and can therefore
 be created by any simple or complex Perl program.  This way, it is more
 flexible than an XML file to store the data.  For instance, you can decide
