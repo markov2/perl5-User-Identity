@@ -4,12 +4,14 @@
 #oodist: testing, however the code of this development version may be broken!
 
 package User::Identity::Collection::Locations;
-use base 'User::Identity::Collection';
+use parent 'User::Identity::Collection';
 
 use strict;
 use warnings;
 
-use User::Identity::Location;
+use Log::Report     'user-identity';
+
+use User::Identity::Location ();
 
 use Carp qw/croak/;
 

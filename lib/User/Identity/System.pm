@@ -4,13 +4,15 @@
 #oodist: testing, however the code of this development version may be broken!
 
 package User::Identity::System;
-use base 'User::Identity::Item';
+use parent 'User::Identity::Item';
 
 use strict;
 use warnings;
 
-use User::Identity;
-use Scalar::Util 'weaken';
+use Log::Report     'user-identity';
+
+use User::Identity  ();
+use Scalar::Util    qw/weaken/;
 
 #--------------------
 =chapter NAME
@@ -47,15 +49,15 @@ sub type { "network" }
 Create a new system.  You can specify a name as first argument, or
 in the OPTION list.  Without a specific name, the organization is used as name.
 
-=option  hostname DOMAIN
+=option  hostname $name
 =default hostname C<'localhost'>
-The hostname of the described system.  It is preferred to use full
+The $name of the described system.  It is preferred to use full
 system names, not abbreviations.  For instance, you can better use
 C<www.tux.aq> than C<www> to avoid confusion.
 
-=option  location NICKNAME|OBJECT
+=option  location $nick|OBJECT
 =default location undef
-The NICKNAME of a location which is defined for the same user.  You can
+The $nick of a location which is defined for the same user.  You can
 also specify a User::Identity::Location OBJECT.
 
 =option  os       STRING

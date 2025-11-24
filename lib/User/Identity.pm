@@ -4,10 +4,12 @@
 #oodist: testing, however the code of this development version may be broken!
 
 package User::Identity;
-use base 'User::Identity::Item';
+use parent 'User::Identity::Item';
 
 use strict;
 use warnings;
+
+use Log::Report     'user-identity';
 
 use Carp;
 

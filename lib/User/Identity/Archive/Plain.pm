@@ -4,10 +4,12 @@
 #oodist: testing, however the code of this development version may be broken!
 
 package User::Identity::Archive::Plain;
-use base 'User::Identity::Archive';
+use parent 'User::Identity::Archive';
 
 use strict;
 use warnings;
+
+use Log::Report     'user-identity';
 
 use Carp;
 
@@ -58,12 +60,12 @@ my %abbreviations = (
 	email    => 'Mail::Identity',
 	location => 'User::Identity::Location',
 	system   => 'User::Identity::System',
-	list     => 'User::Identity::Collection::Emails'
+	list     => 'User::Identity::Collection::Emails',
 );
 
 sub init($)
 {	my ($self, $args) = @_;
-	$self->SUPER::init($args) or return;
+	$self->SUPER::init($args);
 
 	# Define the keywords.
 

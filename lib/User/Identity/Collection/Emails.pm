@@ -4,12 +4,14 @@
 #oodist: testing, however the code of this development version may be broken!
 
 package User::Identity::Collection::Emails;
-use base 'User::Identity::Collection';
+use parent 'User::Identity::Collection';
 
 use strict;
 use warnings;
 
-use Mail::Identity;
+use Log::Report     'user-identity';
+
+use Mail::Identity  ();
 
 #--------------------
 =chapter NAME

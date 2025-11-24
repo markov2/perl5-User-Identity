@@ -4,13 +4,15 @@
 #oodist: testing, however the code of this development version may be broken!
 
 package User::Identity::Location;
-use base 'User::Identity::Item';
+use parent 'User::Identity::Item';
 
 use strict;
 use warnings;
 
-use User::Identity;
-use Scalar::Util 'weaken';
+use Log::Report     'user-identity';
+
+use User::Identity  ();
+use Scalar::Util    qw/weaken/;
 
 #--------------------
 =chapter NAME

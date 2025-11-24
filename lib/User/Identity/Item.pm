@@ -8,7 +8,9 @@ package User::Identity::Item;
 use strict;
 use warnings;
 
-use Scalar::Util qw/weaken/;
+use Log::Report     'user-identity';
+
+use Scalar::Util    qw/weaken/;
 use Carp;
 
 #--------------------
@@ -60,7 +62,7 @@ to an e-mail address and a location.
 
 sub new(@)
 {	my $class = shift;
-	return undef unless @_;       # no empty users.
+	@_ or return undef;       # no empty users.
 
 	unshift @_, 'name' if @_ %2;  # odd-length list: starts with nick
 

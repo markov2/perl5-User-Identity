@@ -4,13 +4,15 @@
 #oodist: testing, however the code of this development version may be broken!
 
 package Mail::Identity;
-use base 'User::Identity::Item';
+use parent 'User::Identity::Item';
 
 use strict;
 use warnings;
 
-use User::Identity;
-use Scalar::Util 'weaken';
+use Log::Report     'user-identity';
+
+use User::Identity  ();
+use Scalar::Util    qw/weaken/;
 
 #--------------------
 =chapter NAME
@@ -53,7 +55,7 @@ object.
 =section Constructors
 =cut
 
-sub type() { "email" }
+sub type() { 'email' }
 
 =c_method new [$name], %options
 
@@ -79,7 +81,6 @@ when both do not exist, the name is taken.
 
 =option  location $name|OBJECT
 =default location <random user's location>
-
 The user's location which relates to this mail identity.  This can be
 specified as location $name (which will be looked-up when needed), or
 as User::Identity::Location object.
