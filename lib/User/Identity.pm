@@ -20,7 +20,7 @@ User::Identity - maintain info about a physical person
 
   use User::Identity;
   my $me = User::Identity->new(
-	   'john',
+    'john',
     firstname => 'John',
     surname   => 'Doe'
    );
@@ -32,6 +32,12 @@ User::Identity - maintain info about a physical person
 The C<User-Identity> distribution is created to maintain a set of informational
 objects which are related to one user.  The C<User::Identity> module tries to
 be smart providing defaults, conversions and often required combinations.
+
+B<Be aware:>
+This module versions 4.0 and up is not fully compatible with older releases:
+mainly the exception handling has changed.  When you need to upgrade, please
+read F<https://github.com/markov2/perl5-Mail-Box/wiki/>
+B<Version 3 is still maintained> and may see new releases as well.
 
 The identities are not implementing any kind of storage, and can therefore
 be created by any simple or complex Perl program.  This way, it is more
