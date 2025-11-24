@@ -46,7 +46,7 @@ my %oodist   = (
 	}, ],
 );
 
-my %prereq = (
+my %requires = (
 	'Hash::Ordered' => 0.014,
 );
 
@@ -77,7 +77,8 @@ WriteMakefile
 		},
 		prereqs => {
 			runtime => {
-				requires => \%prereq,
+				requires => \%requires,
+				optional => \%optional,
 			},
 			develop => {
 				requires => {
