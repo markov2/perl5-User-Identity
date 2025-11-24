@@ -45,7 +45,7 @@ country specific output.
 =chapter METHODS
 =cut
 
-sub type { "location" }
+sub type { 'location' }
 
 =c_method new [$name], %options
 Create a new location.  You can specify a name as first argument, or
@@ -183,9 +183,9 @@ presented.
 =cut
 
 sub phone()
-{	my $self = shift;
-
+{	my $self  = shift;
 	my $phone = $self->{UIL_phone} or return ();
+
 	my @phone = ref $phone ? @$phone : $phone;
 	wantarray ? @phone : $phone[0];
 }
@@ -227,12 +227,9 @@ sub fullAddress()
 	defined $city && defined $address or return;
 
 	my $country = $self->country;
-	$country
-	  = defined $country ? "\n$country"
-	  : defined $cc      ? "\n".uc($cc)
-	  :   '';
+	$country    = defined $country ? "\n$country" : defined $cc ? "\n".uc($cc) : '';
 
-	if(defined $org) {$org .= "\n"} else {$org = ''};
+	$org       .= defined $org && length $org ? "\n" : '';
 
 	if($cc eq 'nl')
 	{	$pc = "$1 ".uc($2)."  " if defined $pc && $pc =~ m/(\d{4})\s*([a-zA-Z]{2})/;

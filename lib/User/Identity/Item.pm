@@ -11,7 +11,6 @@ use warnings;
 use Log::Report     'user-identity';
 
 use Scalar::Util    qw/weaken/;
-use Carp;
 
 #--------------------
 =chapter NAME
@@ -21,8 +20,7 @@ User::Identity::Item - general base class for User::Identity
 =chapter SYNOPSIS
 
 =chapter DESCRIPTION
-
-The C<User::Identity::Item> base class is extended into useful modules: it
+This C<User::Identity::Item> base class is extended into useful modules: it
 has no use by its own.
 
 =chapter METHODS
@@ -50,10 +48,10 @@ The encapsulating object: the object which collects this one.
 One used option is not defined.  Check the manual page of the class to
 see which options are accepted.
 
-=warning Unknown options @names for a $class
-More than one option is not defined.
+=warning unknown option '$name' for $class.
+One or more parameters are unknown options.
 
-=error Each item requires a name
+=error each item requires a name.
 You have to specify a name for each item.  These names need to be
 unique within one collection, but feel free to give the same name
 to an e-mail address and a location.
@@ -70,8 +68,8 @@ sub new(@)
 	my $self = (bless {}, $class)->init(\%args);
 
 	if(my @missing = keys %args)
-	{	local $" = '", "';
-		warn "WARNING: Unknown ".(@missing==1? 'option' : 'options' ). " \"@missing\" for a $class\n";
+	{	warning __xn"unknown option '{name}' for {class}.", "unknown options {names} for {class}",
+			scalar @missing, name => $missing[0], names => \@missing, class => $class;
 	}
 
 	$self;
@@ -80,9 +78,8 @@ sub new(@)
 sub init($)
 {	my ($self, $args) = @_;
 
-	unless(defined($self->{UII_name} = delete $args->{name}))
-	{	croak "ERROR: Each item requires a name";
-	}
+	$self->{UII_name} = delete $args->{name}
+		// error __x"each item requires a name.";
 
 	$self->{UII_description} = delete $args->{description};
 	$self;
@@ -142,25 +139,13 @@ Predefined type nicknames are C<email>, C<system>, and C<location>.
   my $email = $me->addCollection(type => 'email');
   my $email = $me->addCollection('email');
 
-=error $object is not a collection.
-The first argument is an object, but not of a class which extends
-User::Identity::Collection.
+=error this $object is not a collection.
 
-=error Don't know what type of collection you want to add.
-If you add a collection, it must either by a collection object or a
-list of options which can be used to create a collection object.  In
-the latter case, the type of collection must be specified.
-
-=error Cannot load collection module for $type ($class).
+=error cannot load collection module for $type ($class): $err
 Either the specified $type does not exist, or that module named $class returns
 compilation errors.  If the type as specified in the warning is not
 the name of a package, you specified a nickname which was not defined.
 Maybe you forgot the 'require' the package which defines the nickname.
-
-=error Creation of a collection via $class failed.
-The $class did compile, but it was not possible to create an object
-of that class using the options you specified.
-
 =cut
 
 our %collectors = (
@@ -177,21 +162,18 @@ sub addCollection(@)
 	my $object;
 	if(ref $_[0])
 	{	$object = shift;
-		$object->isa('User::Identity::Collection') or croak "ERROR: $object is not a collection";
+		$object->isa('User::Identity::Collection') or error __x"this {object} is not a collection.", object => $object;
 	}
 	else
 	{	unshift @_, 'type' if @_ % 2;
 		my %args  = @_;
-		my $type  = delete $args{type};
-
-		$type or croak "ERROR: Don't know what type of collection you want to add";
+		my $type  = delete $args{type} or panic "no collection type specified";
 
 		my $class = $collectors{$type} || $collectors{$type.'s'} || $type;
 		eval "require $class";
-		$@ and croak "ERROR: Cannot load collection module $type ($class); $@\n";
+		$@ and error __x"cannot load collection module {type} ({class}); {err}", type => $type, class => $class, err => $@;
 
 		$object = $class->new(%args);
-		defined $object or croak "ERROR: Creation of a collection via $class failed\n";
 	}
 
 	$object->parent($self);
@@ -231,7 +213,6 @@ sub collection($;$)
 	wantarray ? $collection->roles : $collection;
 }
 
-
 =method add $collection, $role
 The $role is added to the $collection.  The $collection is the name of a
 collection, which will be created automatically with M<addCollection()> if
@@ -255,7 +236,7 @@ values.
   my $system = User::Identity::Collection::System->new(...);
   $ui->add($system => 'localhost');
 
-=warning No collection $name
+=error nvalid collection $name.
 The collection with $name does not exist and can not be created.
 
 =cut
@@ -266,10 +247,8 @@ sub add($$)
 	  = ref $collname && $collname->isa('User::Identity::Collection') ? $collname
 	  :   ($self->collection($collname) || $self->addCollection($collname));
 
-	unless($collection)
-	{	carp "No collection $collname";
-		return;
-	}
+	defined $collection
+		or error __x"invalid collection {name}.", name => $collname;
 
 	$collection->addRole(@_);
 }

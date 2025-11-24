@@ -182,8 +182,8 @@ sub charset()
 {	my $self = shift;
 	return $self->{MI_charset} if defined $self->{MI_charset};
 
-	my $user = $self->user     or return undef;
-	$user->charset;
+	my $user = $self->user;
+	defined $user ? $user->charset : undef;
 }
 
 =method language
@@ -195,8 +195,8 @@ sub language()
 {	my $self = shift;
 	return $self->{MI_language} if defined $self->{MI_language};
 
-	my $user = $self->user     or return undef;
-	$user->language;
+	my $user = $self->user;
+	defined $user ? $user->language : undef;
 }
 
 =method domain
@@ -294,9 +294,9 @@ you do no need to worry: input cannot break the outcome!
 sub phrase()
 {	my $self = shift;
 	return $self->{MI_phrase} if defined $self->{MI_phrase};
-	my $user = $self->user     or return undef;
-	my $full = $user->fullName or return undef;
-	$full;
+
+	my $user = $self->user;
+	defined $user ? $user->fullName : undef;
 }
 
 #signature
@@ -316,8 +316,8 @@ sub username()
 		return $address;
 	}
 
-	my $user = $self->user or return;
-	$user->nickname;
+	my $user = $self->user;
+	defined $user ? $user->nickname : undef;
 }
 
 1;

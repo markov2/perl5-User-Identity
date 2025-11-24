@@ -11,8 +11,6 @@ use warnings;
 
 use Log::Report     'user-identity';
 
-use Carp;
-
 #--------------------
 =chapter NAME
 
@@ -212,8 +210,8 @@ sub fullName()
 
 	my ($first, $prefix, $surname) = @$self{ qw/UI_firstname UI_prefix UI_surname/};
 
-	$surname = ucfirst $self->nickname if  defined $first && ! defined $surname;
-	$first   = $self->firstname        if !defined $first &&   defined $surname;
+	$surname //= ucfirst $self->nickname if defined $first;
+	$first   //= $self->firstname        if defined $surname;
 
 	my $full = join ' ', grep defined, ($first, $prefix, $surname);
 	$full = $self->firstname unless length $full;
@@ -234,10 +232,10 @@ sub formalName()
 {	my $self = shift;
 	return $self->{UI_formal_name} if defined $self->{UI_formal_name};
 
-	my $initials = $self->initials;
+	my $initials  = $self->initials;
 
 	my $firstname = $self->{UI_firstname};
-	$firstname = "($firstname)" if defined $firstname;
+	$firstname    = "($firstname)" if defined $firstname;
 
 	join ' ', grep defined,
 		$self->courtesy, $initials, @$self{ qw/UI_prefix UI_surname UI_titles/ };

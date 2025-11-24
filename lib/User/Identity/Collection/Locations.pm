@@ -13,8 +13,6 @@ use Log::Report     'user-identity';
 
 use User::Identity::Location ();
 
-use Carp qw/croak/;
-
 #--------------------
 =chapter NAME
 
@@ -24,7 +22,7 @@ User::Identity::Collection::Locations - a collection of locations
 
 =chapter DESCRIPTION
 
-The C<User::Identity::Collection::Location> object maintains a set
+This C<User::Identity::Collection::Locations> object maintains a set
 User::Identity::Location objects, each describing a physical location.
 
 =chapter METHODS

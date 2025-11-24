@@ -37,13 +37,13 @@ which can be stored.
 sub type { "archive" }
 
 =c_method new [$name], %options
-=option  from FILEHANDLE|FILENAME
+=option  from $filehandle|$file
 =default from undef
 =cut
 
 sub init($)
 {	my ($self, $args) = @_;
-	$self->SUPER::init($args) or return;
+	$self->SUPER::init($args);
 
 	if(my $from = delete $args->{from})
 	{	$self->from($from) or return;

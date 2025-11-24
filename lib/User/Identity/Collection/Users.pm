@@ -22,7 +22,7 @@ User::Identity::Collection::Users - a collection of users
 
 =chapter DESCRIPTION
 
-The User::Identity::Collection::Users object maintains a set
+This C<User::Identity::Collection::Users> object maintains a set
 User::Identity objects, each describing a user.
 
 =chapter METHODS

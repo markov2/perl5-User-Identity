@@ -47,12 +47,13 @@ my %oodist   = (
 );
 
 my %requires = (
-	'Hash::Ordered' => '0.014',
-	'Log::Report'   => '1.42',
+	'Hash::Ordered'        => '0.014',
+	'Log::Report'          => '1.42',
 );
 
 my %optional = (
 	'Geography::Countries' => 2009041301,
+	'Date::Parse'          => 0,
 );
 
 WriteMakefile

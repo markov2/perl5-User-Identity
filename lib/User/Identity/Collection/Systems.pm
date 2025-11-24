@@ -22,7 +22,7 @@ User::Identity::Collection::Systems - a collection of system descriptions
 
 =chapter DESCRIPTION
 
-The User::Identity::Collection::Systems object maintains a set
+This C<User::Identity::Collection::Systems> object maintains a set
 User::Identity::System objects, each describing a login for the
 user on some system.
 

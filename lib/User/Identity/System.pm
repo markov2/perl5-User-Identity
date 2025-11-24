@@ -43,7 +43,7 @@ Nearly all methods can return undef.
 =chapter METHODS
 =cut
 
-sub type { "network" }
+sub type { 'network' }
 
 =c_method new [$name], %options
 Create a new system.  You can specify a name as first argument, or

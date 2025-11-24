@@ -11,12 +11,10 @@ use warnings;
 
 use Log::Report     'user-identity';
 
-use User::Identity ();
-use Hash::Ordered  ();
+use User::Identity  ();
+use Hash::Ordered   ();
 
-use Carp;
-use List::Util     qw/first/;
-
+use List::Util      qw/first/;
 
 #--------------------
 =chapter NAME
@@ -98,7 +96,7 @@ use overload '@{}' => sub { [ $_[0]->roles ] };
 =section Constructors
 =cut
 
-sub type { "people" }
+sub type { 'people' }
 
 =c_method new [$name], %options
 
@@ -106,28 +104,22 @@ sub type { "people" }
 The CLASS which is used to store the information for each of the maintained
 objects within this collection.
 
-=option   roles    ROLE|ARRAY
+=option   roles    $role|\@roles
 =default  roles    undef
-Immediately add some roles to this collection.  In case of an ARRAY,
-each element of the array is passed separately to M<addRole()>. So,
-you may end-up with an ARRAY of arrays each grouping a set of options
-to create a role.
-
+Immediately add some @roles to this collection.  In case of an ARRAY,
+each element is passed separately to M<addRole()>. So, you may end-up
+with an ARRAY of ARRAYS each grouping a set of options to create a role.
 =cut
 
 sub init($)
 {	my ($self, $args) = @_;
 	defined($self->SUPER::init($args)) or return;
 
-	$self->{UIC_itype} = delete $args->{item_type} or die;
+	$self->{UIC_itype} = delete $args->{item_type} or panic;
 	tie %{$self->{UIC_roles}}, 'Hash::Ordered';
+
 	my $roles = $args->{roles};
-
-	my @roles
-	  = ! defined $roles      ? ()
-	  : ref $roles eq 'ARRAY' ? @$roles
-	  :   $roles;
-
+	my @roles = ! defined $roles ? () : ref $roles eq 'ARRAY' ? @$roles : $roles;
 	$self->addRole($_) for @roles;
 	$self;
 }
@@ -171,11 +163,11 @@ Easier
   $ui->add(location => 'home', address => 'street 32' );
   $ui->add(location => [ 'home', address => 'street 32' ] );
 
-=error Wrong type of role for $collection: requires a $expect but got a $type
+=error wrong type of role for $collection: requires a $expect but got a $type.
 Each $collection groups sets of roles of one specific type ($expect).  You
 cannot add objects of a different $type.
 
-=error Cannot create a $type to add this to my collection.
+=error cannot create a $type to add this to my collection.
 Some options are specified to create a $type object, which is native to
 this collection.  However, for some reason this failed.
 =cut
@@ -188,12 +180,12 @@ sub addRole(@)
 	if(ref $_[0] && ref $_[0] ne 'ARRAY')
 	{	$role = shift;
 		$role->isa($maintains)
-			or croak "ERROR: Wrong type of role for ".ref($self) . ": requires a $maintains but got a ". ref($role);
+			or error __x"wrong type of role for {collection}: requires a {expect} but got a {type}.",
+				collection => ref $self, expect => $maintains, type => ref $role;
 	}
 	else
-	{	$role = $maintains->new(ref $_[0] ? @{$_[0]} :  @_);
-		defined $role
-			or croak "ERROR: Cannot create a $maintains to add this to my collection.";
+	{	$role = $maintains->new(ref $_[0] ? @{$_[0]} :  @_)
+			or error __x"cannot create a {type} to add this to my collection.", type => $maintains;
 	}
 
 	$role->parent($self);
@@ -216,24 +208,19 @@ sub removeRole($)
 =method renameRole <$role|$oldname>, $newname
 Give the role a different name, and move it in the collection.
 
-=error Cannot rename $name into $newname: already exists
-=error Cannot rename $name into $newname: doesn't exist
+=error cannot rename $from into $to: already exists.
+=error cannot rename $from into $to: doesn't exist.
 =cut
 
 sub renameRole($$$)
 {	my ($self, $which, $newname) = @_;
 	my $name = ref $which ? $which->name : $which;
 
-	if(exists $self->{UIC_roles}{$newname})
-	{	$self->log(ERROR => "cannot rename $name into $newname: already exists");
-		return ();
-	}
+	! exists $self->{UIC_roles}{$newname}
+		or error __x"cannot rename {from} into {to}: already exists", from => $name, to => $newname;
 
-	my $role = delete $self->{UIC_roles}{$name};
-	unless(defined $role)
-	{	$self->log(ERROR => "cannot rename $name into $newname: doesn't exist");
-		return ();
-	}
+	my $role = delete $self->{UIC_roles}{$name}
+		or error __x"cannot rename {from} into {to}: doesn't exist", from => $name, to => $newname;
 
 	$role->name($newname);   # may imply change other attributes.
 	$self->{UIC_roles}{$newname} = $role;
