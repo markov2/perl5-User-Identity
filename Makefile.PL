@@ -5,7 +5,7 @@ use 5.016;
 use ExtUtils::MakeMaker;
 
 # Use command 'oodist' to produce your whole software release.
-my $version = '3.00';
+my $version = '3.01';
 my $git      = "https://github.com/markov2/perl5-User-Identity";
 my $publish  = "../public_html/user-identity";
 my $homepage = "http://perl.overmeer.net/CPAN/";
