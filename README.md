@@ -18,6 +18,13 @@ better source is CPAN; to get it installed simply run:
    cpan -i User::Identity
 ```
 
+When you wish to upgrade into the MailBox v3 suite, not v4, then use
+
+```sh
+   cpanm -i User::Identity~<4
+```
+
+
 ## Development &rarr; Release
 
 Important to know, is that I use an extension on POD to write the manuals.
