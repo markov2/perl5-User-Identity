@@ -125,8 +125,8 @@ returned, and can be used for many methods directly.
 For %options, see the specific type of collection.  Additional options are
 listed below.
 
-=requires type STRING|CLASS
-The nickname of a collection class or the CLASS name itself of the
+=requires type STRING|$class
+The nickname of a collection class or the $class name itself of the
 object to be created.  Required if an object has to be created.
 Predefined type nicknames are C<email>, C<system>, and C<location>.
 
@@ -141,7 +141,7 @@ Predefined type nicknames are C<email>, C<system>, and C<location>.
 
 =error this $object is not a collection.
 
-=error cannot load collection module for $type ($class): $err
+=error cannot load collection module for $type ($class): $@
 Either the specified $type does not exist, or that module named $class returns
 compilation errors.  If the type as specified in the warning is not
 the name of a package, you specified a nickname which was not defined.
@@ -171,7 +171,7 @@ sub addCollection(@)
 
 		my $class = $collectors{$type} || $collectors{$type.'s'} || $type;
 		eval "require $class";
-		$@ and error __x"cannot load collection module {type} ({class}); {err}", type => $type, class => $class, err => $@;
+		$@ and error __x"cannot load collection module {type} ({class}): {err}", type => $type, class => $class, err => $@;
 
 		$object = $class->new(%args);
 	}

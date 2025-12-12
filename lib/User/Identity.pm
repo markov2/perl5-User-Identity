@@ -36,7 +36,7 @@ be smart providing defaults, conversions and often required combinations.
 B<Be aware:>
 This module versions 4.0 and up is not fully compatible with older releases:
 mainly the exception handling has changed.  When you need to upgrade, please
-read F<https://github.com/markov2/perl5-Mail-Box/wiki/>
+read L<the wiki|https://github.com/markov2/perl5-Mail-Box/wiki/>.
 B<Version 3 is still maintained> and may see new releases as well.
 
 The identities are not implementing any kind of storage, and can therefore
