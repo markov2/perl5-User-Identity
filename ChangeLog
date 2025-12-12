@@ -12,6 +12,7 @@ version 3.01:
 
 	Fixes:
 	- missing optional dependency
+	- optional modules -> recommends
 
 version 3.00: Mon 24 Nov 10:49:18 CET 2025
 
