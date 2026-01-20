@@ -236,7 +236,7 @@ values.
   my $system = User::Identity::Collection::System->new(...);
   $ui->add($system => 'localhost');
 
-=error nvalid collection $name.
+=error invalid collection $name.
 The collection with $name does not exist and can not be created.
 
 =cut
