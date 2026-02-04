@@ -63,7 +63,7 @@ L<groups of systems|User::Identity::Collection::Systems>
 
 =chapter OVERLOADED
 
-=overload "" stringification
+=overload '""' stringification
 Returns the name of the collection and a sorted list of defined items.
 
 =examples
@@ -76,7 +76,7 @@ use overload '""' => sub {
 	$self->name . ": " . join(", ", sort map $_->name, $self->roles);
 };
 
-=overload @{} array dereference
+=overload '@{}' array dereference
 When the reference to a collection object is used as array-reference, it
 will be shown as list of roles.
 
